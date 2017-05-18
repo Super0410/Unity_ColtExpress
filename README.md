@@ -1,7 +1,6 @@
 # Unity_ColtExpress
 帮朋友写的课设，仿制柯尔特列车
 
-需求：
 1、Start Quit
 	Start：
 		player：
