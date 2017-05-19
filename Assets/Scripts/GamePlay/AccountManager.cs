@@ -5,25 +5,50 @@ using UnityEngine.UI;
 
 public class AccountManager : MonoBehaviour
 {
-	[SerializeField] Text text_PlayerInfo;
+	[SerializeField] AccountReactionManager reactionManager;
+	[SerializeField] GameObject panel_Account;
 	[SerializeField] Text text_RoundInfo;
+	[SerializeField] Text text_PlayerAction;
+	[SerializeField] GameObject panel_Reaction;
+	[SerializeField] Text text_Reaction;
 
-	Queue<PlayerIndexCardInfo> thisRoundPlayerIndexCardInfoQueue;
+	Queue<PlayerIndexCardHolder> thisRoundPlayerIndexCardInfoQueue;
 
-	public void StartAccount (Queue<PlayerIndexCardInfo> targetPlayerIndexCardInfo)
+	CardHolder thisAccountCardHolder;
+
+	void Start ()
 	{
+		panel_Account.SetActive (false);
+	}
+
+	public void StartAccount ()
+	{
+		if (!panel_Account.activeSelf)
+			panel_Account.SetActive (true);
+
 		thisRoundPlayerIndexCardInfoQueue = GameManager.Instance.gamePlayManager.playCardManager.holeGameCardQueue;
 
 		nextCard ();
 	}
 
+	public void FinishOneCard ()
+	{
+		panel_Reaction.SetActive (false);
+		Destroy (thisAccountCardHolder.gameObject);
+		nextCard ();
+	}
+
 	void nextCard ()
 	{
-		PlayerIndexCardInfo thisPlayerIndexCardInfo = thisRoundPlayerIndexCardInfoQueue.Dequeue ();
+		PlayerIndexCardHolder thisPlayerIndexCardInfo = thisRoundPlayerIndexCardInfoQueue.Dequeue ();
 
-		CardInfo cardInfo = thisPlayerIndexCardInfo.cardInfo;
+		thisAccountCardHolder = thisPlayerIndexCardInfo.cardHolder;
+		CardInfo cardInfo = thisAccountCardHolder.Card;
 		int playerIndex = thisPlayerIndexCardInfo.playerIndex;
+
 		PlayerManager thisPlayerManager = GameManager.Instance.gamePlayManager.playerInGameManager.GetAlivePlayerManagerByIndex (playerIndex);
+		text_PlayerAction.text = "玩家" + playerIndex + ":" + thisPlayerManager.m_Player.playerName + " " + cardInfo.accountDescription;
+
 		cardToPlayer (cardInfo, thisPlayerManager);
 	}
 
@@ -36,6 +61,10 @@ public class AccountManager : MonoBehaviour
 
 			if (thisPlayerTrainConnection.nearbyTrain_Up != null) {
 				player.Move (thisPlayerTrainConnection.nearbyTrain_Up);
+				StartCoroutine ("delaySubmitPanel", "移动完成");
+			} else {
+				StartCoroutine ("delaySubmitPanel", "移动失败");
+
 			}
 
 
@@ -44,6 +73,9 @@ public class AccountManager : MonoBehaviour
 
 			if (thisPlayerTrainConnection.nearbyTrain_Down != null) {
 				player.Move (thisPlayerTrainConnection.nearbyTrain_Down);
+				StartCoroutine ("delaySubmitPanel", "移动完成");
+			} else {
+				StartCoroutine ("delaySubmitPanel", "移动失败");
 			}
 
 
@@ -52,6 +84,9 @@ public class AccountManager : MonoBehaviour
 
 			if (thisPlayerTrainConnection.nearbyTrain_Left != null) {
 				player.Move (thisPlayerTrainConnection.nearbyTrain_Left);
+				StartCoroutine ("delaySubmitPanel", "移动完成");
+			} else {
+				StartCoroutine ("delaySubmitPanel", "移动失败");
 			}
 
 			break;
@@ -59,21 +94,37 @@ public class AccountManager : MonoBehaviour
 
 			if (thisPlayerTrainConnection.nearbyTrain_Right != null) {
 				player.Move (thisPlayerTrainConnection.nearbyTrain_Right);
+				StartCoroutine ("delaySubmitPanel", "移动完成");
+			} else {
+				StartCoroutine ("delaySubmitPanel", "移动失败");
 			}
 
 			break;
 		case CardType.Pick:
 
+
 			break;
 		case CardType.Punch:
+
 
 			break;
 		case CardType.Shot:
 
+
 			break;
 		case CardType.Police:
+
 
 			break;
 		}
 	}
+
+	IEnumerator delaySubmitPanel (string infoText)
+	{
+		yield return new WaitForSeconds (0.3f);
+		
+		panel_Reaction.SetActive (true);
+		text_Reaction.text = infoText;
+	}
+
 }

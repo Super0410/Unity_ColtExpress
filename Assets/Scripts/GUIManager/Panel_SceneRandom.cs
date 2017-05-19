@@ -4,43 +4,44 @@ using UnityEngine;
 
 public class Panel_SceneRandom : MonoBehaviour
 {
-	[SerializeField] Transform layout_SceneParent;
-	SceneHolder[] allSceneHolderArr;
+	[SerializeField] Animator anim;
+	[SerializeField] PlayerPreviewHolder playerPreviewPrefab;
+	[SerializeField] Transform layout_PlayerPreviewParent;
+	SceneInfo[] allSceneInfoArr;
 
 	void Awake ()
 	{
 		GameManager.Instance.OnProgressChange += onProgressChange;
 
-		allSceneHolderArr = layout_SceneParent.GetComponentsInChildren<SceneHolder> ();
+		allSceneInfoArr = GameManager.Instance.gamePlayManager.BasicSceneInfoArr;
 	}
 
-	public void DoRandom ()
+	public void ShowPlayerPreview (PlayerInfo[] targetPlayerInfo)
 	{
 		if (!gameObject.activeSelf)
 			gameObject.SetActive (true);
 
-		allSceneHolderArr = Utillity.ShuffleArray (allSceneHolderArr);
-		for (int i = 0; i < allSceneHolderArr.Length; i++) {
-			allSceneHolderArr [i].transform.SetSiblingIndex (i);
+		GUIHelper.Instance.DestroyChildImmediatly<PlayerPreviewHolder> (layout_PlayerPreviewParent);
+
+		PlayerPreviewHolder[] newPlayerPreviewHolderArr = GUIHelper.Instance.InstantiateTUnderParent<PlayerInfo, PlayerPreviewHolder> (targetPlayerInfo, playerPreviewPrefab, layout_PlayerPreviewParent);
+		for (int i = 0; i < newPlayerPreviewHolderArr.Length; i++) {
+			newPlayerPreviewHolderArr [i].Init (i, targetPlayerInfo [i]);
 		}
+
+		allSceneInfoArr = Utillity.ShuffleArray (allSceneInfoArr);
 	}
 
 	public void OnEnterGame ()
 	{
-		SceneInfo[] sceneInfoArr = new SceneInfo[allSceneHolderArr.Length];
-		for (int i = 0; i < sceneInfoArr.Length; i++) {
-			sceneInfoArr [i] = allSceneHolderArr [i].Scene;
-		}
-		GameManager.Instance.SetScene (sceneInfoArr);
+		GameManager.Instance.SetScene (allSceneInfoArr);
 		GameManager.Instance.SetProgressType (GameManager.ProgressType.GameBegin);
 	}
 
 	void onProgressChange (GameManager.ProgressType targetType)
 	{
 		if (targetType == GameManager.ProgressType.RandomScene) {
-			gameObject.SetActive (true);
+			SwitchPlayerUI.Instance.OpenPanel (anim);
 		} else
-			gameObject.SetActive (false);
+			SwitchPlayerUI.Instance.CloseCurrent (anim);
 	}
-
 }

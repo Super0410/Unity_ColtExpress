@@ -59,7 +59,7 @@ public class GameManager : Singleton<GameManager>
 			playerIniter.Init (PlayerCount);
 			break;
 		case ProgressType.RandomScene:
-			sceneRandom.DoRandom ();
+			sceneRandom.ShowPlayerPreview (allPlayerArr);
 			break;
 		case ProgressType.GameBegin:
 			gamePlayManager.Init (allPlayerArr, shuffledSceneArr);

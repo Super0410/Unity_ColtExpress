@@ -51,6 +51,10 @@ public class PlayerInGameManager : MonoBehaviour
 
 			allPlayerDict.Add (i, newPlayerManager);
 			alivePlayerDict.Add (i, newPlayerManager);
+
+			//new train
+			TrainConnection newStartTrainConnection = GameManager.Instance.gamePlayManager.trainCommander.GetRandomPlayerStartTrainConnection ();
+			newPlayerManager.Move (newStartTrainConnection);
 		}
 
 	}

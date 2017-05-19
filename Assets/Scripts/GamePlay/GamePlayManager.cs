@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class GamePlayManager : MonoBehaviour
 {
+	public TrainCommander trainCommander;
 	public PlayerInGameManager playerInGameManager;
 	public PlayCardManager playCardManager;
+	public AccountManager accountManager;
 	[SerializeField] SpriteRenderer sceneBg;
 	[SerializeField] Card[] basicCardArr;
+	[SerializeField] SceneInfo[] basicSceneInfoArr;
+
+	public SceneInfo[] BasicSceneInfoArr{ get { return basicSceneInfoArr; } }
 
 	SceneInfo[] gameSceneArr;
 	int maxNumOfGame;
@@ -22,6 +27,12 @@ public class GamePlayManager : MonoBehaviour
 
 	public void Init (PlayerInfo[] allPlayerArr, SceneInfo[] gameSceneArr)
 	{
+		if (!gameObject.activeSelf)
+			gameObject.SetActive (true);
+
+		//Train
+		trainCommander.InitAllManager ();
+
 		// Card
 		List<CardInfo> allStoreCardList = new List<CardInfo> ();
 		for (int i = 0; i < basicCardArr.Length; i++) {
@@ -56,6 +67,7 @@ public class GamePlayManager : MonoBehaviour
 
 		curNumOfGame++;
 		sceneBg.sprite = Resources.Load<Sprite> (gameSceneArr [curNumOfGame - 1].bgUrl);
+		playCardManager.NextGame ();
 
 		maxRound = gameSceneArr [curNumOfGame - 1].cardSideArr.Length;
 		curRound = 0;
@@ -65,6 +77,9 @@ public class GamePlayManager : MonoBehaviour
 	void nextRound ()
 	{
 		if (curRound >= maxRound) {
+
+			playCardManager.PlayCardFinish ();
+			accountManager.StartAccount ();
 			print ("AASDASF");
 			return;
 		}

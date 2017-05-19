@@ -40,6 +40,7 @@ public class PlayerInitManager : MonoBehaviour
 			GameObject[] availableCharacterGObjArr = getAvailableCharacterList ();
 			playerInitUI.PrepareOnePlayer (allPlayerList.Count, availableCharacterGObjArr);
 		} else {
+			playerInitUI.OnFinish ();
 			GameManager.Instance.SetAllPlayer (allPlayerList.ToArray ());
 			GameManager.Instance.SetProgressType (GameManager.ProgressType.RandomScene);
 		}
@@ -47,8 +48,8 @@ public class PlayerInitManager : MonoBehaviour
 
 	void onProgressChange (GameManager.ProgressType targetType)
 	{
-		if (targetType != GameManager.ProgressType.InitPlayer)
-			gameObject.SetActive (false);
+		if (targetType != GameManager.ProgressType.InitPlayer) {
+		}
 	}
 
 	GameObject[] getAvailableCharacterList ()

@@ -5,15 +5,24 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
 	int playerIndex;
-	[SerializeField] PlayerInfo m_Player;
+
+	public PlayerInfo m_Player{ get ; private set; }
+
+	[SerializeField] Transform playerRenderer;
+	PlayCardManager playCardManager;
 	PlayerInfoHolder playerInfoManager;
 	[SerializeField] List<CardInfo> storeCardList = new List<CardInfo> ();
-	PlayCardManager playCardManager;
 
 	[SerializeField] int totalHealth = 3;
 	[SerializeField] int curHealth;
 
 	public TrainConnection m_trainPosition{ get; private set; }
+
+	void Update ()
+	{
+		if (m_trainPosition != null)
+			playerRenderer.position = Vector3.Lerp (playerRenderer.position, m_trainPosition.transform.position, 5f * Time.deltaTime);
+	}
 
 	public void Init (int targetIndex, PlayerInfo playerIdentity, PlayerInfoHolder targetPlayerInfoHolder, List<CardInfo> targetCardList, PlayCardManager targetManager)
 	{

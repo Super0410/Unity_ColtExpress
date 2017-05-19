@@ -14,20 +14,27 @@ public class PlayCardManager : MonoBehaviour
 	[SerializeField] CardHolder cardPrefab;
 	[SerializeField] int cardCountPerRound = 6;
 
+	bool thisRoundIsUp;
 	int thisPlayerIndex;
 	string thisPlayerInfoText;
 	CardInfo[] thisPlayerGenerateCardArr;
 	List<CardHolder> thisPlayerRoundCardList;
 
-	public Queue<PlayerIndexCardInfo> holeGameCardQueue { get; private set; }
+	public Queue<PlayerIndexCardHolder> holeGameCardQueue { get; private set; }
 
-	public void ClearCardQueue ()
+	public void NextGame ()
 	{
-		holeGameCardQueue = new Queue<PlayerIndexCardInfo> ();
+		holeGameCardQueue = new Queue<PlayerIndexCardHolder> ();
+	}
+
+	public void PlayCardFinish ()
+	{
+		Panel_PlayCard.SetActive (false);
 	}
 
 	public void SetNewRound (int curRound, int maxRound, bool isUp)
 	{
+		thisRoundIsUp = isUp;
 		text_RoundInfo.text = "出牌" + "   第" + curRound + "轮/共" + maxRound + "轮" + "   牌面向" + (isUp ? "上" : "下");
 	}
 
@@ -101,15 +108,18 @@ public class PlayCardManager : MonoBehaviour
 		for (int i = 0; i < thisPlayerRoundCardList.Count; i++) {
 			if (thisPlayerRoundCardList [i].CardID == targetCardHolder.CardID) {
 				thisPlayerRoundCardList [i].transform.SetParent (layout_PlayedCardHolder, false);
-				thisPlayerRoundCardList [i].transform.localScale = Vector3.one * 0.7f;
+				thisPlayerRoundCardList [i].transform.localScale = Vector3.one * 0.8f;
 				thisPlayerRoundCardList [i].GetComponent<Button> ().onClick.RemoveAllListeners ();
 				thisPlayerRoundCardList [i].Btn_PlayCard.onClick.RemoveAllListeners ();
 				thisPlayerRoundCardList [i].Btn_PlayCard.GetComponentInChildren<Text> ().text = thisPlayerInfoText;
+				if (!thisRoundIsUp) {
+					thisPlayerRoundCardList [i].GetComponentInChildren<Text> ().enabled = false;
+				}
 				break;
 			}
 		}
 
-		holeGameCardQueue.Enqueue (new PlayerIndexCardInfo (thisPlayerIndex, targetCardHolder.Card));
+		holeGameCardQueue.Enqueue (new PlayerIndexCardHolder (thisPlayerIndex, targetCardHolder));
 		GameManager.Instance.gamePlayManager.OnePlayerFinishPlay (thisPlayerIndex);
 	}
 }

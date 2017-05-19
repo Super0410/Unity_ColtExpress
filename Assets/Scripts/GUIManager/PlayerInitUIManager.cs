@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerInitUIManager : MonoBehaviour
 {
+	[SerializeField] Animator anim_Switch;
 	[SerializeField] PlayerInitManager playerIniter;
 	[SerializeField] Text text_PlayerNum;
 	[SerializeField] InputField inputField_PlayerNameInput;
@@ -54,8 +55,16 @@ public class PlayerInitUIManager : MonoBehaviour
 			text_PlayerNameWarning.enabled = true;
 			return;
 		}
+
+		anim_Switch.SetTrigger ("Switch");
 		PlayerInfo newPlayer = new PlayerInfo (playerName, selecedCharacter);
 		playerIniter.AddOnePlayer (newPlayer);
+	}
+
+	public void OnFinish ()
+	{
+		SwitchPlayerUI.Instance.CloseByTargetAnimByTrigger (anim_Switch, "Finish");// anim_Switch.SetBool ("IsFinish", true);
+//		anim_Switch.SetTrigger ("Finish");
 	}
 
 	void onCharacterClick (CharacterHolder targetCharacter)

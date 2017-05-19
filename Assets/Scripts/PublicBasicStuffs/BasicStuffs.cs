@@ -47,19 +47,20 @@ public struct CardInfo
 	public string cardName;
 	public CardType cardType;
 	public string description;
+	public string accountDescription;
 	public string bgUrl;
 }
 
 [System.Serializable]
-public struct PlayerIndexCardInfo
+public struct PlayerIndexCardHolder
 {
 	public int playerIndex;
-	public CardInfo cardInfo;
+	public CardHolder cardHolder;
 
-	public PlayerIndexCardInfo (int targetIndex, CardInfo targetCardInfo)
+	public PlayerIndexCardHolder (int targetIndex, CardHolder targetCardHolder)
 	{
 		playerIndex = targetIndex;
-		cardInfo = targetCardInfo;
+		cardHolder = targetCardHolder;
 	}
 }
 
@@ -69,6 +70,13 @@ public struct ItemInfo
 	public string itemName;
 	public string moneyCount;
 	public string itemUrl;
+}
+
+[System.Serializable]
+public struct CardTypeDirection
+{
+	public CardType cardType;
+	public string direction;
 }
 
 public enum CardType
