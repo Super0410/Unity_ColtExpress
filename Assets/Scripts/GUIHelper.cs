@@ -14,7 +14,7 @@ public class GUIHelper : Singleton<GUIHelper>
 		}
 	}
 
-	public K[] InstantiateTUnderParent<T,K> (T[] instantiateArr, K prefab, Transform parent) where K : MonoBehaviour
+	public K[] InstantiateTUnderParent<K,T> (T[] instantiateArr, K prefab, Transform parent) where K : MonoBehaviour
 	{
 		K[] returnArr = new K[instantiateArr.Length];
 		for (int i = 0; i < instantiateArr.Length; i++) {

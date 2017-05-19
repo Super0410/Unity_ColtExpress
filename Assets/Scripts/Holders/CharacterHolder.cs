@@ -15,6 +15,7 @@ public class CharacterHolder : MonoBehaviour
 	public void SetCharacter (CharacterInfo targetCharacter)
 	{
 		character = targetCharacter;
+		updateInfo ();
 	}
 
 	public void SetSelected (bool isSelected)
@@ -33,7 +34,6 @@ public class CharacterHolder : MonoBehaviour
 	void updateInfo ()
 	{
 		GetComponentInChildren<Text> ().text = character.characterName;
-
 		if (character.spriteUrl != null)
 			image_apperance.sprite = Resources.Load<Sprite> (character.spriteUrl);
 	}

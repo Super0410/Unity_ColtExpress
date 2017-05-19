@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class SwitchPlayerUI : Singleton<SwitchPlayerUI>
+public class SwitchUIManager : MonoBehaviour
 {
 	string animOpenStr = "IsOpen";
 	string animOpenTrigger = "Open";

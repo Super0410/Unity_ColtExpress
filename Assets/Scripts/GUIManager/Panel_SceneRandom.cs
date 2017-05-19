@@ -18,12 +18,15 @@ public class Panel_SceneRandom : MonoBehaviour
 
 	public void ShowPlayerPreview (PlayerInfo[] targetPlayerInfo)
 	{
-		if (!gameObject.activeSelf)
+		if (!gameObject.activeSelf) {
 			gameObject.SetActive (true);
+			UIManager.Instance.SwitchUI.OpenPanel (anim);
+		}
 
 		GUIHelper.Instance.DestroyChildImmediatly<PlayerPreviewHolder> (layout_PlayerPreviewParent);
 
-		PlayerPreviewHolder[] newPlayerPreviewHolderArr = GUIHelper.Instance.InstantiateTUnderParent<PlayerInfo, PlayerPreviewHolder> (targetPlayerInfo, playerPreviewPrefab, layout_PlayerPreviewParent);
+		PlayerPreviewHolder[] newPlayerPreviewHolderArr = GUIHelper.Instance.InstantiateTUnderParent<PlayerPreviewHolder, PlayerInfo>
+			(targetPlayerInfo, playerPreviewPrefab, layout_PlayerPreviewParent);
 		for (int i = 0; i < newPlayerPreviewHolderArr.Length; i++) {
 			newPlayerPreviewHolderArr [i].Init (i, targetPlayerInfo [i]);
 		}
@@ -40,8 +43,8 @@ public class Panel_SceneRandom : MonoBehaviour
 	void onProgressChange (GameManager.ProgressType targetType)
 	{
 		if (targetType == GameManager.ProgressType.RandomScene) {
-			SwitchPlayerUI.Instance.OpenPanel (anim);
+			UIManager.Instance.SwitchUI.OpenPanel (anim);
 		} else
-			SwitchPlayerUI.Instance.CloseCurrent (anim);
+			UIManager.Instance.SwitchUI.CloseCurrent (anim);
 	}
 }

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerInitManager : MonoBehaviour
 {
-	[SerializeField] CharacterHolder[] allCharacterArr;
 	[SerializeField] PlayerInitUIManager playerInitUI;
+	CharacterInfo[] availableCharacterInfoArr;
 	int playerCount;
 	List<PlayerInfo> allPlayerList = new List<PlayerInfo> ();
 
@@ -19,8 +19,9 @@ public class PlayerInitManager : MonoBehaviour
 		this.playerCount = playerCount;
 		allPlayerList.Clear ();
 
-		GameObject[] availableCharacterGObjArr = getAvailableCharacterList ();
-		playerInitUI.PrepareOnePlayer (0, availableCharacterGObjArr);
+		availableCharacterInfoArr = GameManager.Instance.gamePlayManager.BasicCharacterInfoArr;
+
+		setNextPlayer ();
 	}
 
 	public bool IsPlayerNameUsed (string nameToCheck)
@@ -37,13 +38,18 @@ public class PlayerInitManager : MonoBehaviour
 		allPlayerList.Add (targetPlayer);
 
 		if (allPlayerList.Count < playerCount) {
-			GameObject[] availableCharacterGObjArr = getAvailableCharacterList ();
-			playerInitUI.PrepareOnePlayer (allPlayerList.Count, availableCharacterGObjArr);
+			setNextPlayer ();
 		} else {
 			playerInitUI.OnFinish ();
 			GameManager.Instance.SetAllPlayer (allPlayerList.ToArray ());
 			GameManager.Instance.SetProgressType (GameManager.ProgressType.RandomScene);
 		}
+	}
+
+	void setNextPlayer ()
+	{
+		availableCharacterInfoArr = getAvailableCharacterList ();
+		playerInitUI.PrepareOnePlayer (allPlayerList.Count, availableCharacterInfoArr);
 	}
 
 	void onProgressChange (GameManager.ProgressType targetType)
@@ -52,15 +58,15 @@ public class PlayerInitManager : MonoBehaviour
 		}
 	}
 
-	GameObject[] getAvailableCharacterList ()
+	CharacterInfo[] getAvailableCharacterList ()
 	{
-		List<GameObject> availableCharacterList = new List<GameObject> ();
-		for (int i = 0; i < allCharacterArr.Length; i++) {
+		List<CharacterInfo> availableCharacterList = new List<CharacterInfo> ();
+		for (int i = 0; i < availableCharacterInfoArr.Length; i++) {
 			if (allPlayerList.Count == 0) {
-				availableCharacterList.Add (allCharacterArr [i].gameObject);
+				availableCharacterList.Add (availableCharacterInfoArr [i]);
 			} else {
-				if (!isCharacterExist (allCharacterArr [i].Character))
-					availableCharacterList.Add (allCharacterArr [i].gameObject);
+				if (!isCharacterExist (availableCharacterInfoArr [i]))
+					availableCharacterList.Add (availableCharacterInfoArr [i]);
 			}
 		}
 		return availableCharacterList.ToArray ();

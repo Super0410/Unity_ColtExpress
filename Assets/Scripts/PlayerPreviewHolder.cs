@@ -18,6 +18,9 @@ public class PlayerPreviewHolder : MonoBehaviour
 		float scale = Random.Range (0.3f, 0.5f);
 		transform.localScale = Vector3.one * scale;
 		StartCoroutine (animationScale ());
+
+		Vector3 euler = new Vector3 (0, 0, Random.Range (-5f, 5f));
+		transform.localEulerAngles = euler;
 	}
 
 	public void Init (int targetPlayerIndex, PlayerInfo targetPlayerInfo)

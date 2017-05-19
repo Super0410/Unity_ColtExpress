@@ -10,33 +10,37 @@ public class PlayerInitUIManager : MonoBehaviour
 	[SerializeField] Text text_PlayerNum;
 	[SerializeField] InputField inputField_PlayerNameInput;
 	[SerializeField] Text text_PlayerNameWarning;
-	[SerializeField] Transform layout_CharacterHolder;
+	[SerializeField] Transform layout_CharacterParent;
+	[SerializeField] CharacterHolder characterHolderPrefab;
 
 	List<CharacterHolder> nowCharacterList;
 	CharacterInfo selecedCharacter;
 
-	public void PrepareOnePlayer (int playerIndex, GameObject[] characterAvailableArr)
+	public void PrepareOnePlayer (int playerIndex, CharacterInfo[] availableCharacterInfoArr)
 	{
 		text_PlayerNum.text = (playerIndex + 1).ToString ();
 		inputField_PlayerNameInput.text = "";
 		text_PlayerNameWarning.enabled = false;
 		nowCharacterList = new List<CharacterHolder> ();
 
-		if (layout_CharacterHolder.childCount > 0) {
-			Image[] childImageArr = layout_CharacterHolder.GetComponentsInChildren<Image> ();
-			for (int i = 0; i < childImageArr.Length; i++) {
-				DestroyImmediate (childImageArr [i].gameObject);
-			}
-		}
-		for (int i = 0; i < characterAvailableArr.Length; i++) {
-			Transform newCharacter = Instantiate (characterAvailableArr [i]).transform;
-			newCharacter.SetParent (layout_CharacterHolder, false);
-			newCharacter.GetComponent<Button> ().onClick.AddListener (delegate {
-				onCharacterClick (newCharacter.GetComponent<CharacterHolder> ());
+
+		GUIHelper.Instance.DestroyChildImmediatly<CharacterHolder> (layout_CharacterParent);
+		CharacterHolder[] availableCharacterHolderArr = GUIHelper.Instance.InstantiateTUnderParent<CharacterHolder,CharacterInfo>
+			(availableCharacterInfoArr, characterHolderPrefab, layout_CharacterParent);
+
+		for (int i = 0; i < availableCharacterHolderArr.Length; i++) {
+
+			CharacterHolder thisCharacterHolder = availableCharacterHolderArr [i];
+
+			thisCharacterHolder.SetCharacter (availableCharacterInfoArr [i]);
+
+			thisCharacterHolder.GetComponent<Button> ().onClick.AddListener (delegate {
+				onCharacterClick (thisCharacterHolder);
 			});
 
-			nowCharacterList.Add (newCharacter.GetComponent<CharacterHolder> ());
+			nowCharacterList.Add (thisCharacterHolder);
 		}
+
 		nowCharacterList [0].GetComponent<Button> ().onClick.Invoke ();
 	}
 
@@ -63,8 +67,7 @@ public class PlayerInitUIManager : MonoBehaviour
 
 	public void OnFinish ()
 	{
-		SwitchPlayerUI.Instance.CloseByTargetAnimByTrigger (anim_Switch, "Finish");// anim_Switch.SetBool ("IsFinish", true);
-//		anim_Switch.SetTrigger ("Finish");
+		UIManager.Instance.SwitchUI.CloseByTargetAnimByTrigger (anim_Switch, "Finish");
 	}
 
 	void onCharacterClick (CharacterHolder targetCharacter)

@@ -9,8 +9,11 @@ public class GamePlayManager : MonoBehaviour
 	public PlayCardManager playCardManager;
 	public AccountManager accountManager;
 	[SerializeField] SpriteRenderer sceneBg;
+	[SerializeField] CharacterInfo[] basicCharacterArr;
 	[SerializeField] Card[] basicCardArr;
 	[SerializeField] SceneInfo[] basicSceneInfoArr;
+
+	public CharacterInfo[] BasicCharacterInfoArr{ get { return basicCharacterArr; } }
 
 	public SceneInfo[] BasicSceneInfoArr{ get { return basicSceneInfoArr; } }
 
