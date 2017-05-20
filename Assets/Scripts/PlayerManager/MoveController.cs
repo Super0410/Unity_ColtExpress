@@ -17,6 +17,8 @@ public class MoveController : MonoBehaviour
 
 	public void Move (TrainConnection targetTrainConnection)
 	{
+		if (trainConnection != null)
+			trainConnection.trainManager.LeavePlayer (playerManager);
 		trainConnection = targetTrainConnection;
 		targetTrainConnection.trainManager.StorePlayer (playerManager);
 	}

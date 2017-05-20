@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class ItemHolder : MonoBehaviour, IPointerClickHandler
+public class ItemHolder : MonoBehaviour, IPointerClickHandler, IMarkable
 {
 	[SerializeField] ItemInfo itemInfo;
 	[SerializeField] SpriteRenderer sprite_apperance;
@@ -31,11 +31,16 @@ public class ItemHolder : MonoBehaviour, IPointerClickHandler
 			sprite_apperance.sprite = targetSprite;
 	}
 
-	public void SetCanPick (bool canPick)
+	#region IMarkable implementation
+
+	public void SetMark (bool isMarked)
 	{
-		this.canPick = canPick;
+		canPick = isMarked;
 		sprite_apperance.color = canPick ? Color.red : Color.white;
 	}
+
+	#endregion
+
 
 	#region IPointerClickHandler implementation
 

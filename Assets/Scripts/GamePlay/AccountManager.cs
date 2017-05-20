@@ -26,12 +26,6 @@ public class AccountManager : MonoBehaviour
 		if (!panel_Account.activeSelf)
 			panel_Account.SetActive (true);
 
-		thisAccountCardHolder = null;
-		thisAccountPlayerManager = null;
-		thisAccountPlayerStandTrainManager = null;
-		thisAccountItemHolderList = new List<ItemHolder> ();
-
-
 		thisRoundPlayerIndexCardInfoQueue = GameManager.Instance.gamePlayManager.playCardManager.holeGameCardQueue;
 
 		nextCard ();
@@ -45,26 +39,40 @@ public class AccountManager : MonoBehaviour
 
 	public void OnPickUpItem (ItemHolder pickedItemHolder)
 	{
-		for (int i = 0; i < thisAccountItemHolderList.Count; i++) {
-			thisAccountItemHolderList [i].SetCanPick (false);
-		}
+		SetMarkableMark (thisAccountItemHolderList.ToArray (), false);
 		thisAccountPlayerManager.PlayerItemController.StoreItem (pickedItemHolder);
 		thisAccountPlayerStandTrainManager.PickUpItem (pickedItemHolder);
+
 		reactionManager.SetActionSuccess ();
 	}
 
-	public void OnPunchPlayer (PlayerManager punchedPlayerManager)
+	public void OnPlayerBeHit (PlayerManager beHitPlayerManager)
 	{
-		for (int i = 0; i < thisAccountCanAttackPlayerManagerList.Count; i++) {
-			thisAccountCanAttackPlayerManagerList [i].SetCanBeHit (false);
+		SetMarkableMark (thisAccountCanAttackPlayerManagerList.ToArray (), false);
+
+		if (thisAccountCardInfo.cardType == CardType.Punch) {
+			
+			ItemHolder droppedItemHolder = beHitPlayerManager.PlayerItemController.GetLastStoreItem ();
+			thisAccountPlayerStandTrainManager.StoreItem (droppedItemHolder);
+
+		} else if (thisAccountCardInfo.cardType == CardType.Shot) {
+
+			beHitPlayerManager.PlayerHealthController.TakeDamage ();
+
+		} else {
+			print ("Wrong in PlayerHit");
 		}
-		ItemHolder droppedItemHolder = punchedPlayerManager.PlayerItemController.GetLastStoreItem ();
-		thisAccountPlayerStandTrainManager.StoreItem (droppedItemHolder);
 		reactionManager.SetActionSuccess ();
 	}
 
 	void nextCard ()
 	{
+		thisAccountCardHolder = null;
+		thisAccountPlayerManager = null;
+		thisAccountPlayerStandTrainManager = null;
+		thisAccountItemHolderList = new List<ItemHolder> ();
+		thisAccountCanAttackPlayerManagerList = new List<PlayerManager> ();
+
 		reactionManager.OnBegin ();
 		PlayerIndexCardHolderMap thisPlayerIndexCardInfo = thisRoundPlayerIndexCardInfoQueue.Dequeue ();
 
@@ -79,14 +87,14 @@ public class AccountManager : MonoBehaviour
 
 	void cardToPlayer (CardInfo card, PlayerManager thisPlayer)
 	{
-		TrainConnection thisPlayerTrainConnection = thisPlayer.PlayerMoveController.PlayerTrainConnection;
-		thisAccountPlayerStandTrainManager = thisPlayerTrainConnection.trainManager;
+		TrainConnection thisPlayerStandTrainConnection = thisPlayer.PlayerMoveController.PlayerTrainConnection;
+		thisAccountPlayerStandTrainManager = thisPlayerStandTrainConnection.trainManager;
 
 		switch (card.cardType) {
 		case CardType.Up:
 
-			if (thisPlayerTrainConnection.nearbyTrain_Up != null) {
-				thisPlayer.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Up);
+			if (thisPlayerStandTrainConnection.nearbyTrain_Up != null) {
+				thisPlayer.PlayerMoveController.Move (thisPlayerStandTrainConnection.nearbyTrain_Up);
 				reactionManager.SetActionSuccess ();
 			} else {
 				reactionManager.SetActionFail (CardType.Up);
@@ -96,8 +104,8 @@ public class AccountManager : MonoBehaviour
 			break;
 		case CardType.Down:
 
-			if (thisPlayerTrainConnection.nearbyTrain_Down != null) {
-				thisPlayer.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Down);
+			if (thisPlayerStandTrainConnection.nearbyTrain_Down != null) {
+				thisPlayer.PlayerMoveController.Move (thisPlayerStandTrainConnection.nearbyTrain_Down);
 				reactionManager.SetActionSuccess ();
 			} else {
 				reactionManager.SetActionFail (CardType.Down);
@@ -107,8 +115,8 @@ public class AccountManager : MonoBehaviour
 			break;
 		case CardType.Left:
 
-			if (thisPlayerTrainConnection.nearbyTrain_Left != null) {
-				thisPlayer.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Left);
+			if (thisPlayerStandTrainConnection.nearbyTrain_Left != null) {
+				thisPlayer.PlayerMoveController.Move (thisPlayerStandTrainConnection.nearbyTrain_Left);
 				reactionManager.SetActionSuccess ();
 			} else {
 				reactionManager.SetActionFail (CardType.Left);
@@ -117,8 +125,8 @@ public class AccountManager : MonoBehaviour
 			break;
 		case CardType.Right:
 
-			if (thisPlayerTrainConnection.nearbyTrain_Right != null) {
-				thisPlayer.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Right);
+			if (thisPlayerStandTrainConnection.nearbyTrain_Right != null) {
+				thisPlayer.PlayerMoveController.Move (thisPlayerStandTrainConnection.nearbyTrain_Right);
 				reactionManager.SetActionSuccess ();
 			} else {
 				reactionManager.SetActionFail (CardType.Right);
@@ -127,36 +135,69 @@ public class AccountManager : MonoBehaviour
 			break;
 		case CardType.Pick:
 
-			thisAccountItemHolderList = thisAccountPlayerStandTrainManager.GetAllItemHolder ();
+			thisAccountItemHolderList = thisAccountPlayerStandTrainManager.GetAllItemHolder;
 			if (thisAccountItemHolderList.Count > 0) {
-				for (int i = 0; i < thisAccountItemHolderList.Count; i++) {
-					thisAccountItemHolderList [i].SetCanPick (true);
-				}
+				SetMarkableMark (thisAccountItemHolderList.ToArray (), true);
 			} else
 				reactionManager.SetActionFail (CardType.Pick);
 
 			break;
 		case CardType.Punch:
 
-			thisAccountCanAttackPlayerManagerList = thisAccountPlayerStandTrainManager.GetAllPlayerManager ();
+			thisAccountCanAttackPlayerManagerList = thisAccountPlayerStandTrainManager.GetAllPlayerManager;
 			if (thisAccountCanAttackPlayerManagerList.Count > 1) {
-				for (int i = 0; i < thisAccountCanAttackPlayerManagerList.Count; i++) {
-					if (thisAccountCanAttackPlayerManagerList [i] == thisPlayer)
-						continue;
-					thisAccountCanAttackPlayerManagerList [i].SetCanBeHit (true);
-				}
+				SetMarkableMark (thisAccountCanAttackPlayerManagerList.ToArray (), thisPlayer, true);
 			} else
 				reactionManager.SetActionFail (CardType.Punch);
 
 			break;
 		case CardType.Shot:
 
+			if (thisAccountPlayerStandTrainManager.IsRoof) {
+				List<TrainManager> roofTrainManagerList = GameManager.Instance.gamePlayManager.trainCommander.RoofTrainManagerList;
+
+				for (int i = 0; i < roofTrainManagerList.Count; i++) {
+					List<PlayerManager> thisRoofPlayerManagerList = roofTrainManagerList [i].GetAllPlayerManager;
+					thisAccountCanAttackPlayerManagerList.AddRange (thisRoofPlayerManagerList);
+				}
+			} else {
+				if (thisPlayerStandTrainConnection.nearbyTrain_Left != null) {
+					TrainManager leftTrainManager = thisPlayerStandTrainConnection.nearbyTrain_Left.trainManager;
+					if (leftTrainManager != null && leftTrainManager.GetAllPlayerManager.Count != 0) {
+						thisAccountCanAttackPlayerManagerList.AddRange (leftTrainManager.GetAllPlayerManager);
+					}
+				}
+				if (thisPlayerStandTrainConnection.nearbyTrain_Right != null) {
+					TrainManager rightTrainManager = thisPlayerStandTrainConnection.nearbyTrain_Right.trainManager;
+					if (rightTrainManager != null && rightTrainManager.GetAllPlayerManager.Count != 0) {
+						thisAccountCanAttackPlayerManagerList.AddRange (rightTrainManager.GetAllPlayerManager);
+					}
+				}
+			}
+
+			SetMarkableMark (thisAccountCanAttackPlayerManagerList.ToArray (), thisPlayer, true);
 
 			break;
 		case CardType.Police:
 
 
 			break;
+		}
+	}
+
+	void SetMarkableMark (IMarkable[] targetMarkArr, bool isMarked)
+	{
+		for (int i = 0; i < targetMarkArr.Length; i++) {
+			targetMarkArr [i].SetMark (isMarked);
+		}
+	}
+
+	void SetMarkableMark (IMarkable[]  targetMarkArr, IMarkable exceptMark, bool isMarked)
+	{
+		for (int i = 0; i < targetMarkArr.Length; i++) {
+			if (targetMarkArr [i] == exceptMark)
+				continue;
+			targetMarkArr [i].SetMark (isMarked);
 		}
 	}
 }

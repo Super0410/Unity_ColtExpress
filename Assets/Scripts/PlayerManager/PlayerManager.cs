@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 [RequireComponent (typeof(HealthController))]
 [RequireComponent (typeof(CardController))]
 [RequireComponent (typeof(MoveController))]
-public class PlayerManager : MonoBehaviour, IPointerClickHandler
+public class PlayerManager : MonoBehaviour, IPointerClickHandler, IMarkable
 {
 	[Header ("Identity")]
 	[SerializeField] int playerIndex;
@@ -66,11 +66,15 @@ public class PlayerManager : MonoBehaviour, IPointerClickHandler
 		itemController.StoreItem (targetItemHolder);
 	}
 
-	public void SetCanBeHit (bool canBeHit)
+	#region IMarkable implementation
+
+	public void SetMark (bool isMarked)
 	{
-		this.canBeHit = canBeHit;
+		canBeHit = isMarked;
 		playerRenderer.color = canBeHit ? Color.red : Color.white;
 	}
+
+	#endregion
 
 	#region IPointerClickHandler implementation
 
@@ -78,7 +82,7 @@ public class PlayerManager : MonoBehaviour, IPointerClickHandler
 	{
 		print (name);
 		if (canBeHit) {
-			GameManager.Instance.gamePlayManager.accountManager.OnPunchPlayer (this);
+			GameManager.Instance.gamePlayManager.accountManager.OnPlayerBeHit (this);
 		}
 	}
 

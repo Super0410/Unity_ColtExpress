@@ -23,7 +23,8 @@ public class ItemController : MonoBehaviour
 	public ItemHolder GetLastStoreItem ()
 	{
 		ItemHolder lastItemHolder = holdItemHolderStack.Pop ();
-		lastItemHolder.gameObject.SetActive (true);
+		if (lastItemHolder != null)
+			lastItemHolder.gameObject.SetActive (true);
 
 		playerUIManager.UpdateItem (holdItemHolderStack.ToArray ());
 		return lastItemHolder;

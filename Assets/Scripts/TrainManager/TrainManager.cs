@@ -20,6 +20,10 @@ public class TrainManager : MonoBehaviour
 
 	public TrainConnection ThisTrainConnection { get { return trainConnection; } }
 
+	public List<ItemHolder> GetAllItemHolder { get { return allItemHolderList; } }
+
+	public List<PlayerManager> GetAllPlayerManager{ get { return allPlayerManagerList; } }
+
 	#endregion
 
 	public void Init (TrainPropertiesInfo targetTrainProperties)
@@ -91,13 +95,9 @@ public class TrainManager : MonoBehaviour
 		}
 	}
 
-	public List<ItemHolder> GetAllItemHolder ()
+	public void LeavePlayer (PlayerManager leavePlayerManager)
 	{
-		return allItemHolderList;
+		allPlayerManagerList.Remove (leavePlayerManager);
 	}
 
-	public List<PlayerManager> GetAllPlayerManager ()
-	{
-		return allPlayerManagerList;
-	}
 }
