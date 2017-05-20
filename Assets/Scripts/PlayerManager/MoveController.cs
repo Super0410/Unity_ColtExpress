@@ -6,7 +6,7 @@ public class MoveController : MonoBehaviour
 {
 	public Vector3 standPos;
 	PlayerManager playerManager;
-	[SerializeField] TrainConnection trainConnection;
+	TrainConnection trainConnection;
 
 	public TrainConnection PlayerTrainConnection{ get { return trainConnection; } }
 

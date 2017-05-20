@@ -1,16 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 [RequireComponent (typeof(HealthController))]
 [RequireComponent (typeof(CardController))]
 [RequireComponent (typeof(MoveController))]
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : MonoBehaviour, IPointerClickHandler
 {
 	[Header ("Identity")]
 	[SerializeField] int playerIndex;
 	[SerializeField] PlayerInfo playerInfo;
-	[SerializeField] Transform playerRenderer;
+	[SerializeField] Transform playerTrans;
 
 	[Header ("Health")]
 	[SerializeField] HealthController healthController;
@@ -22,6 +23,12 @@ public class PlayerManager : MonoBehaviour
 	[Header ("Move")]
 	[SerializeField] MoveController moveController;
 
+	[Header ("Item")]
+	[SerializeField] ItemController itemController;
+
+	SpriteRenderer playerRenderer;
+	bool canBeHit;
+
 	#region Getter
 
 	public PlayerInfo Player { get { return playerInfo; } }
@@ -32,22 +39,50 @@ public class PlayerManager : MonoBehaviour
 
 	public MoveController PlayerMoveController{ get { return moveController; } }
 
+	public ItemController PlayerItemController{ get { return itemController; } }
+
 	#endregion
 
 	void Update ()
 	{
 		if (moveController.PlayerTrainConnection != null)
-			playerRenderer.position = Vector3.Lerp (playerRenderer.position, moveController.standPos, 5f * Time.deltaTime);
+			playerTrans.position = Vector3.Lerp (playerTrans.position, moveController.standPos, 5f * Time.deltaTime);
 	}
 
-	public void Init (int targetIndex, PlayerInfo targetPlayerInfo, PlayerInfoHolder targetPlayerInfoHolder, List<CardInfo> targetCardList, PlayCardManager targetPlayCardManager)
+	public void Init (int targetIndex, PlayerInfo targetPlayerInfo, PlayerInfoHolder targetPlayerInfoHolder
+		, List<CardInfo> targetCardList, PlayCardManager targetPlayCardManager, TrainConnection targetTrainConnection
+		, ItemHolder targetItemHolder)
 	{
 		playerIndex = targetIndex;
 		playerInfo = targetPlayerInfo;
+		playerRenderer = playerTrans.GetComponent<SpriteRenderer> ();
+		playerRenderer.sprite = Resources.Load<Sprite> (targetPlayerInfo.character.spriteUrl);
 
 		healthController.Init (totalHealth, targetPlayerInfoHolder);
 		cardController.Init (playerIndex, playerInfo, targetCardList, targetPlayCardManager);
 		moveController.Init (this);
+		moveController.Move (targetTrainConnection);
+		itemController.Init (targetPlayerInfoHolder);
+		itemController.StoreItem (targetItemHolder);
 	}
+
+	public void SetCanBeHit (bool canBeHit)
+	{
+		this.canBeHit = canBeHit;
+		playerRenderer.color = canBeHit ? Color.red : Color.white;
+	}
+
+	#region IPointerClickHandler implementation
+
+	public void OnPointerClick (PointerEventData eventData)
+	{
+		print (name);
+		if (canBeHit) {
+			GameManager.Instance.gamePlayManager.accountManager.OnPunchPlayer (this);
+		}
+	}
+
+	#endregion
+
 
 }

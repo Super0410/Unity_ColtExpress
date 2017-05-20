@@ -52,12 +52,12 @@ public struct CardInfo
 }
 
 [System.Serializable]
-public struct PlayerIndexCardHolder
+public struct PlayerIndexCardHolderMap
 {
 	public int playerIndex;
 	public CardHolder cardHolder;
 
-	public PlayerIndexCardHolder (int targetIndex, CardHolder targetCardHolder)
+	public PlayerIndexCardHolderMap (int targetIndex, CardHolder targetCardHolder)
 	{
 		playerIndex = targetIndex;
 		cardHolder = targetCardHolder;
@@ -77,6 +77,14 @@ public struct CardTypeDirection
 {
 	public CardType cardType;
 	public string direction;
+}
+
+[System.Serializable]
+public struct TrainPropertiesInfo
+{
+	public ItemHolder itemHolderPrefab;
+	public int packageCountPerTrain;
+	public int demondCountPerTrain;
 }
 
 public enum CardType

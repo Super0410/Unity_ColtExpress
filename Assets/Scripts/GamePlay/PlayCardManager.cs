@@ -20,11 +20,11 @@ public class PlayCardManager : MonoBehaviour
 	CardInfo[] thisPlayerGenerateCardArr;
 	List<CardHolder> thisPlayerRoundCardList;
 
-	public Queue<PlayerIndexCardHolder> holeGameCardQueue { get; private set; }
+	public Queue<PlayerIndexCardHolderMap> holeGameCardQueue { get; private set; }
 
 	public void NextGame ()
 	{
-		holeGameCardQueue = new Queue<PlayerIndexCardHolder> ();
+		holeGameCardQueue = new Queue<PlayerIndexCardHolderMap> ();
 	}
 
 	public void PlayCardFinish ()
@@ -119,7 +119,7 @@ public class PlayCardManager : MonoBehaviour
 			}
 		}
 
-		holeGameCardQueue.Enqueue (new PlayerIndexCardHolder (thisPlayerIndex, targetCardHolder));
+		holeGameCardQueue.Enqueue (new PlayerIndexCardHolderMap (thisPlayerIndex, targetCardHolder));
 		GameManager.Instance.gamePlayManager.OnePlayerFinishPlay (thisPlayerIndex);
 	}
 }

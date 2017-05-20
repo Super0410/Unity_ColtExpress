@@ -9,6 +9,8 @@ public class PlayerInfoHolder : MonoBehaviour
 	[SerializeField] Image image_HealthBar;
 	[SerializeField] Text text_PlayerName;
 	[SerializeField] Text text_BulletCount;
+	[SerializeField] Transform layout_ItemParent;
+	[SerializeField] Image itemPrefab;
 
 	public void Init (PlayerInfo playerInfo)
 	{
@@ -19,8 +21,17 @@ public class PlayerInfoHolder : MonoBehaviour
 		text_BulletCount.text = "1/6";
 	}
 
-	public void SetHealthFillAmount (float targetAmount)
+	public void UpdateHealth (float targetAmount)
 	{
 		image_HealthBar.fillAmount = targetAmount;
+	}
+
+	public void UpdateItem (ItemHolder[] targetItemHolderArr)
+	{
+		GUIHelper.Instance.DestroyChildImmediatly<Image> (layout_ItemParent);
+		Image[] newItemImageArr = GUIHelper.Instance.InstantiateTUnderParent<Image,ItemHolder> (targetItemHolderArr, itemPrefab, layout_ItemParent);
+		for (int i = 0; i < newItemImageArr.Length; i++) {
+			newItemImageArr [i].sprite = Resources.Load<Sprite> (targetItemHolderArr [i].ThisItemInfo.itemUrl);
+		}
 	}
 }

@@ -1,20 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class AccountManager : MonoBehaviour
 {
-	[SerializeField] AccountReactionManager reactionManager;
+	[SerializeField] Panel_Acount reactionManager;
 	[SerializeField] GameObject panel_Account;
-	[SerializeField] Text text_RoundInfo;
-	[SerializeField] Text text_PlayerAction;
-	[SerializeField] GameObject panel_Reaction;
-	[SerializeField] Text text_Reaction;
 
-	Queue<PlayerIndexCardHolder> thisRoundPlayerIndexCardInfoQueue;
+	Queue<PlayerIndexCardHolderMap> thisRoundPlayerIndexCardInfoQueue;
 
+	CardInfo thisAccountCardInfo;
 	CardHolder thisAccountCardHolder;
+	PlayerManager thisAccountPlayerManager;
+	TrainManager thisAccountPlayerStandTrainManager;
+	List<ItemHolder> thisAccountItemHolderList;
+	List<PlayerManager> thisAccountCanAttackPlayerManagerList;
 
 	void Start ()
 	{
@@ -26,6 +26,12 @@ public class AccountManager : MonoBehaviour
 		if (!panel_Account.activeSelf)
 			panel_Account.SetActive (true);
 
+		thisAccountCardHolder = null;
+		thisAccountPlayerManager = null;
+		thisAccountPlayerStandTrainManager = null;
+		thisAccountItemHolderList = new List<ItemHolder> ();
+
+
 		thisRoundPlayerIndexCardInfoQueue = GameManager.Instance.gamePlayManager.playCardManager.holeGameCardQueue;
 
 		nextCard ();
@@ -33,38 +39,57 @@ public class AccountManager : MonoBehaviour
 
 	public void FinishOneCard ()
 	{
-		panel_Reaction.SetActive (false);
 		Destroy (thisAccountCardHolder.gameObject);
 		nextCard ();
 	}
 
-	void nextCard ()
+	public void OnPickUpItem (ItemHolder pickedItemHolder)
 	{
-		PlayerIndexCardHolder thisPlayerIndexCardInfo = thisRoundPlayerIndexCardInfoQueue.Dequeue ();
-
-		thisAccountCardHolder = thisPlayerIndexCardInfo.cardHolder;
-		CardInfo cardInfo = thisAccountCardHolder.Card;
-		int playerIndex = thisPlayerIndexCardInfo.playerIndex;
-
-		PlayerManager thisPlayerManager = GameManager.Instance.gamePlayManager.playerInGameManager.GetAlivePlayerManagerByIndex (playerIndex);
-		text_PlayerAction.text = "玩家" + (playerIndex + 1) + ":" + thisPlayerManager.Player.playerName + " " + cardInfo.accountDescription;
-
-		cardToPlayer (cardInfo, thisPlayerManager);
+		for (int i = 0; i < thisAccountItemHolderList.Count; i++) {
+			thisAccountItemHolderList [i].SetCanPick (false);
+		}
+		thisAccountPlayerManager.PlayerItemController.StoreItem (pickedItemHolder);
+		thisAccountPlayerStandTrainManager.PickUpItem (pickedItemHolder);
+		reactionManager.SetActionSuccess ();
 	}
 
-	void cardToPlayer (CardInfo card, PlayerManager player)
+	public void OnPunchPlayer (PlayerManager punchedPlayerManager)
 	{
-		TrainConnection thisPlayerTrainConnection = player.PlayerMoveController.PlayerTrainConnection;
+		for (int i = 0; i < thisAccountCanAttackPlayerManagerList.Count; i++) {
+			thisAccountCanAttackPlayerManagerList [i].SetCanBeHit (false);
+		}
+		ItemHolder droppedItemHolder = punchedPlayerManager.PlayerItemController.GetLastStoreItem ();
+		thisAccountPlayerStandTrainManager.StoreItem (droppedItemHolder);
+		reactionManager.SetActionSuccess ();
+	}
+
+	void nextCard ()
+	{
+		reactionManager.OnBegin ();
+		PlayerIndexCardHolderMap thisPlayerIndexCardInfo = thisRoundPlayerIndexCardInfoQueue.Dequeue ();
+
+		thisAccountCardHolder = thisPlayerIndexCardInfo.cardHolder;
+		thisAccountCardInfo = thisAccountCardHolder.Card;
+		int playerIndex = thisPlayerIndexCardInfo.playerIndex;
+		thisAccountPlayerManager = GameManager.Instance.gamePlayManager.playerInGameManager.GetAlivePlayerManagerByIndex (playerIndex);
+		cardToPlayer (thisAccountCardInfo, thisAccountPlayerManager);
+
+		reactionManager.UpdatePlayerAction (playerIndex, thisAccountPlayerManager.Player.playerName, thisAccountCardInfo.accountDescription);
+	}
+
+	void cardToPlayer (CardInfo card, PlayerManager thisPlayer)
+	{
+		TrainConnection thisPlayerTrainConnection = thisPlayer.PlayerMoveController.PlayerTrainConnection;
+		thisAccountPlayerStandTrainManager = thisPlayerTrainConnection.trainManager;
 
 		switch (card.cardType) {
 		case CardType.Up:
 
 			if (thisPlayerTrainConnection.nearbyTrain_Up != null) {
-				player.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Up);
-				StartCoroutine ("delaySubmitPanel", "移动完成");
+				thisPlayer.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Up);
+				reactionManager.SetActionSuccess ();
 			} else {
-				StartCoroutine ("delaySubmitPanel", "移动失败");
-
+				reactionManager.SetActionFail (CardType.Up);
 			}
 
 
@@ -72,10 +97,10 @@ public class AccountManager : MonoBehaviour
 		case CardType.Down:
 
 			if (thisPlayerTrainConnection.nearbyTrain_Down != null) {
-				player.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Down);
-				StartCoroutine ("delaySubmitPanel", "移动完成");
+				thisPlayer.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Down);
+				reactionManager.SetActionSuccess ();
 			} else {
-				StartCoroutine ("delaySubmitPanel", "移动失败");
+				reactionManager.SetActionFail (CardType.Down);
 			}
 
 
@@ -83,29 +108,45 @@ public class AccountManager : MonoBehaviour
 		case CardType.Left:
 
 			if (thisPlayerTrainConnection.nearbyTrain_Left != null) {
-				player.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Left);
-				StartCoroutine ("delaySubmitPanel", "移动完成");
+				thisPlayer.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Left);
+				reactionManager.SetActionSuccess ();
 			} else {
-				StartCoroutine ("delaySubmitPanel", "移动失败");
+				reactionManager.SetActionFail (CardType.Left);
 			}
 
 			break;
 		case CardType.Right:
 
 			if (thisPlayerTrainConnection.nearbyTrain_Right != null) {
-				player.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Right);
-				StartCoroutine ("delaySubmitPanel", "移动完成");
+				thisPlayer.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Right);
+				reactionManager.SetActionSuccess ();
 			} else {
-				StartCoroutine ("delaySubmitPanel", "移动失败");
+				reactionManager.SetActionFail (CardType.Right);
 			}
 
 			break;
 		case CardType.Pick:
 
+			thisAccountItemHolderList = thisAccountPlayerStandTrainManager.GetAllItemHolder ();
+			if (thisAccountItemHolderList.Count > 0) {
+				for (int i = 0; i < thisAccountItemHolderList.Count; i++) {
+					thisAccountItemHolderList [i].SetCanPick (true);
+				}
+			} else
+				reactionManager.SetActionFail (CardType.Pick);
 
 			break;
 		case CardType.Punch:
 
+			thisAccountCanAttackPlayerManagerList = thisAccountPlayerStandTrainManager.GetAllPlayerManager ();
+			if (thisAccountCanAttackPlayerManagerList.Count > 1) {
+				for (int i = 0; i < thisAccountCanAttackPlayerManagerList.Count; i++) {
+					if (thisAccountCanAttackPlayerManagerList [i] == thisPlayer)
+						continue;
+					thisAccountCanAttackPlayerManagerList [i].SetCanBeHit (true);
+				}
+			} else
+				reactionManager.SetActionFail (CardType.Punch);
 
 			break;
 		case CardType.Shot:
@@ -118,13 +159,4 @@ public class AccountManager : MonoBehaviour
 			break;
 		}
 	}
-
-	IEnumerator delaySubmitPanel (string infoText)
-	{
-		yield return new WaitForSeconds (0.3f);
-		
-		panel_Reaction.SetActive (true);
-		text_Reaction.text = infoText;
-	}
-
 }

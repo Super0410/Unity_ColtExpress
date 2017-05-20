@@ -21,7 +21,7 @@ public class HealthController : MonoBehaviour
 		if (curHealth <= 0)
 			playerDie ();
 
-		playerInfoManager.SetHealthFillAmount ((float)curHealth / totalHealth);
+		playerInfoManager.UpdateHealth ((float)curHealth / totalHealth);
 	}
 
 	void playerDie ()

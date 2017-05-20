@@ -4,16 +4,28 @@ using UnityEngine;
 
 public class ItemController : MonoBehaviour
 {
-	Stack<ItemInfo> holdItemInfoStack = new Stack<ItemInfo> ();
+	PlayerInfoHolder playerUIManager;
+	Stack<ItemHolder> holdItemHolderStack = new Stack<ItemHolder> ();
 
-	public void StoreItem (ItemInfo targetItemInfo)
+	public void Init (PlayerInfoHolder targetPlayerUIManager)
 	{
-		holdItemInfoStack.Push (targetItemInfo);
+		playerUIManager = targetPlayerUIManager;
 	}
 
-	public ItemInfo GetLastStoreItem ()
+	public void StoreItem (ItemHolder targetItemInfo)
 	{
-		ItemInfo lastItemInfo = holdItemInfoStack.Pop ();
-		return lastItemInfo;
+		targetItemInfo.gameObject.SetActive (false);
+		holdItemHolderStack.Push (targetItemInfo);
+
+		playerUIManager.UpdateItem (holdItemHolderStack.ToArray ());
+	}
+
+	public ItemHolder GetLastStoreItem ()
+	{
+		ItemHolder lastItemHolder = holdItemHolderStack.Pop ();
+		lastItemHolder.gameObject.SetActive (true);
+
+		playerUIManager.UpdateItem (holdItemHolderStack.ToArray ());
+		return lastItemHolder;
 	}
 }

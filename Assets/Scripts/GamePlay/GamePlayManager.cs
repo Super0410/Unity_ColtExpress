@@ -4,18 +4,30 @@ using UnityEngine;
 
 public class GamePlayManager : MonoBehaviour
 {
+	[Header ("Managers")]
 	public TrainCommander trainCommander;
 	public PlayerInGameManager playerInGameManager;
 	public PlayCardManager playCardManager;
 	public AccountManager accountManager;
+
 	[SerializeField] SpriteRenderer sceneBg;
+
+	[Header ("Infos")]
 	[SerializeField] CharacterInfo[] basicCharacterArr;
 	[SerializeField] Card[] basicCardArr;
 	[SerializeField] SceneInfo[] basicSceneInfoArr;
+	[Header ("0:Package 1:Diamond 2:LargePackage 3:PlayerInit")]
+	[SerializeField] ItemInfo[] basicItemInfoArr;
+
+	#region Getter
 
 	public CharacterInfo[] BasicCharacterInfoArr{ get { return basicCharacterArr; } }
 
 	public SceneInfo[] BasicSceneInfoArr{ get { return basicSceneInfoArr; } }
+
+	public ItemInfo[] BasicItemInfoArr{ get { return basicItemInfoArr; } }
+
+	#endregion
 
 	SceneInfo[] gameSceneArr;
 	int maxNumOfGame;

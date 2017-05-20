@@ -8,7 +8,6 @@ public class TrainManager : MonoBehaviour
 	[SerializeField] bool isRoof;
 	[SerializeField] bool isHead;
 	[SerializeField] TrainConnection trainConnection;
-	TrainPropertiesManager trainProperties;
 
 	[SerializeField] List<ItemHolder> allItemHolderList;
 	[SerializeField] List<PlayerManager> allPlayerManagerList;
@@ -23,37 +22,37 @@ public class TrainManager : MonoBehaviour
 
 	#endregion
 
-	public void Init (TrainPropertiesManager targetTrainProperties)
+	public void Init (TrainPropertiesInfo targetTrainProperties)
 	{
 		trainConnection.trainManager = this;
 		allItemHolderList = new List<ItemHolder> ();
 		allPlayerManagerList = new List<PlayerManager> ();
 
-		trainProperties = targetTrainProperties;
-
 		if (isRoof)
 			return;
 
+		ItemInfo[] itemInfoArr = GameManager.Instance.gamePlayManager.BasicItemInfoArr;
+
 		if (isHead) {
-			ItemInfo largePackageInfo = trainProperties.itemInfoArr [2];
-			GameObject newItem = Instantiate (trainProperties.itemHolderPrefab.gameObject, transform.position, Quaternion.identity) as GameObject;
+			ItemInfo largePackageInfo = itemInfoArr [2];
+			GameObject newItem = Instantiate (targetTrainProperties.itemHolderPrefab.gameObject, transform.position, Quaternion.identity) as GameObject;
 			newItem.name = largePackageInfo.itemName;
 			ItemHolder newItemHolder = newItem.GetComponent<ItemHolder> ();
 			newItemHolder.SetItemInfo (largePackageInfo);
 			StoreItem (newItemHolder);
 		} else {
-			ItemInfo packageInfo = trainProperties.itemInfoArr [0];
-			for (int i = 0; i < trainProperties.packageCountPerTrain; i++) {
-				GameObject newItem = Instantiate (trainProperties.itemHolderPrefab.gameObject, transform.position, Quaternion.identity) as GameObject;
+			ItemInfo packageInfo = itemInfoArr [0];
+			for (int i = 0; i < targetTrainProperties.packageCountPerTrain; i++) {
+				GameObject newItem = Instantiate (targetTrainProperties.itemHolderPrefab.gameObject, transform.position, Quaternion.identity) as GameObject;
 				newItem.name = packageInfo.itemName;
 				ItemHolder newItemHolder = newItem.GetComponent<ItemHolder> ();
 				newItemHolder.SetItemInfo (packageInfo);
 				StoreItem (newItemHolder);
 			}
 
-			ItemInfo diamondInfo = trainProperties.itemInfoArr [1];
-			for (int i = 0; i < trainProperties.demondCountPerTrain; i++) {
-				GameObject newItem = Instantiate (trainProperties.itemHolderPrefab.gameObject, transform.position, Quaternion.identity) as GameObject;
+			ItemInfo diamondInfo = itemInfoArr [1];
+			for (int i = 0; i < targetTrainProperties.demondCountPerTrain; i++) {
+				GameObject newItem = Instantiate (targetTrainProperties.itemHolderPrefab.gameObject, transform.position, Quaternion.identity) as GameObject;
 				newItem.name = diamondInfo.itemName;
 				ItemHolder newItemHolder = newItem.GetComponent<ItemHolder> ();
 				newItemHolder.SetItemInfo (diamondInfo);
@@ -69,10 +68,15 @@ public class TrainManager : MonoBehaviour
 
 		if (allItemHolderList != null) {
 			for (int i = 0; i < allItemHolderList.Count; i++) {
-				allItemHolderList [i].transform.localPosition = Vector3.zero + Vector3.right * 0.02f * (allItemHolderList.Count / 2);
+				allItemHolderList [i].transform.localPosition = Vector3.zero + Vector3.right * 0.02f * ((float)allItemHolderList.Count / 2);
 				allItemHolderList [i].transform.localPosition += Vector3.left * 0.02f * i;
 			}
 		}
+	}
+
+	public void PickUpItem (ItemHolder pickedItem)
+	{
+		allItemHolderList.Remove (pickedItem);
 	}
 
 	public void StorePlayer (PlayerManager targetPlayerManager)
@@ -81,14 +85,19 @@ public class TrainManager : MonoBehaviour
 
 		if (allPlayerManagerList != null) {
 			for (int i = 0; i < allPlayerManagerList.Count; i++) {
-				allPlayerManagerList [i].PlayerMoveController.standPos = transform.position + Vector3.right * 0.5f * (allPlayerManagerList.Count / 2);
+				allPlayerManagerList [i].PlayerMoveController.standPos = transform.position + Vector3.right * 0.5f * ((float)allPlayerManagerList.Count / 2);
 				allPlayerManagerList [i].PlayerMoveController.standPos += Vector3.left * 0.5f * i;
 			}
 		}
 	}
 
-	public List<ItemHolder> GetAllItem ()
+	public List<ItemHolder> GetAllItemHolder ()
 	{
 		return allItemHolderList;
+	}
+
+	public List<PlayerManager> GetAllPlayerManager ()
+	{
+		return allPlayerManagerList;
 	}
 }

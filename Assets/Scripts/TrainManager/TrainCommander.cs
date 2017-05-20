@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TrainCommander : MonoBehaviour
 {
-	[SerializeField] TrainPropertiesManager trainPropertiesManager;
+	[SerializeField] TrainPropertiesInfo trainPropertiesManager;
 	[SerializeField] TrainManager[] trainManagerArr;
 	List<TrainConnection> trainPlayerStartList = new List<TrainConnection> ();
 

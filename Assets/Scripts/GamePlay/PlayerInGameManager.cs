@@ -8,21 +8,16 @@ public class PlayerInGameManager : MonoBehaviour
 	[SerializeField] Transform layout_PlayerInfoParent;
 	[SerializeField] PlayerInfoHolder playerInfoHolderPrefab;
 	[SerializeField] PlayerManager playerPrefab;
+	[SerializeField] ItemHolder itemHolderPrefab;
 
 	Dictionary<int, PlayerManager> allPlayerDict = new Dictionary<int, PlayerManager> ();
 	Dictionary<int, PlayerManager> alivePlayerDict = new Dictionary<int, PlayerManager> ();
 	int curPlayerIndex;
 
 	public void Init (PlayerInfo[] allPlayerArr, List<CardInfo> allStoreCardList, PlayCardManager playCardManager)
-	{		
+	{
 		// PlayerInfoHolder
-		if (layout_PlayerInfoParent.childCount > 0) {
-			PlayerInfoHolder[] childImageArr = layout_PlayerInfoParent.GetComponentsInChildren<PlayerInfoHolder> ();
-			for (int i = 0; i < childImageArr.Length; i++) {
-				if (childImageArr [i] != null)
-					DestroyImmediate (childImageArr [i].gameObject);
-			}
-		}
+		GUIHelper.Instance.DestroyChildImmediatly<PlayerInfoHolder> (layout_PlayerInfoParent);
 
 		// Player
 		string playerHolderName = "PlayerHolder";
@@ -46,15 +41,20 @@ public class PlayerInGameManager : MonoBehaviour
 			PlayerInfoHolder newPlayerInfoHolder = newPlayerInfoHolderGObj.GetComponent<PlayerInfoHolder> ();
 			newPlayerInfoHolder.Init (allPlayerArr [i]);
 
+			//new train position
+			TrainConnection newStartTrainConnection = GameManager.Instance.gamePlayManager.trainCommander.GetRandomPlayerStartTrainConnection ();
+			//new item
+			ItemInfo newItemInfo = GameManager.Instance.gamePlayManager.BasicItemInfoArr [3];
+			ItemHolder newItemHolder = Instantiate (itemHolderPrefab);
+			newItemHolder.SetItemInfo (newItemInfo);
+
 			PlayerManager newPlayerManager = newPlayerGObj.GetComponent<PlayerManager> ();
-			newPlayerManager.Init (i, allPlayerArr [i], newPlayerInfoHolder, allStoreCardList, playCardManager);
+			newPlayerManager.Init (i, allPlayerArr [i], newPlayerInfoHolder, allStoreCardList, playCardManager
+				, newStartTrainConnection, newItemHolder);
 
 			allPlayerDict.Add (i, newPlayerManager);
 			alivePlayerDict.Add (i, newPlayerManager);
 
-			//new train
-			TrainConnection newStartTrainConnection = GameManager.Instance.gamePlayManager.trainCommander.GetRandomPlayerStartTrainConnection ();
-			newPlayerManager.PlayerMoveController.Move (newStartTrainConnection);
 		}
 
 	}

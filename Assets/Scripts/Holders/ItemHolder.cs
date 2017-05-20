@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class ItemHolder : MonoBehaviour
+public class ItemHolder : MonoBehaviour, IPointerClickHandler
 {
 	[SerializeField] ItemInfo itemInfo;
 	[SerializeField] SpriteRenderer sprite_apperance;
 	[SerializeField] Text text_itemName;
+
+	bool canPick;
+
+	public ItemInfo ThisItemInfo{ get { return itemInfo; } }
 
 	public void SetItemInfo (ItemInfo targetItemInfo)
 	{
@@ -18,9 +23,30 @@ public class ItemHolder : MonoBehaviour
 	[ContextMenu ("UpdateInfo")]
 	void updateInfo ()
 	{
-		text_itemName.text = itemInfo.itemName [0].ToString ();
+		if (text_itemName != null)
+			text_itemName.text = itemInfo.itemName;
 
-		if (itemInfo.itemUrl != null)
-			sprite_apperance.sprite = Resources.Load<Sprite> (itemInfo.itemUrl);
+		Sprite targetSprite = Resources.Load<Sprite> (itemInfo.itemUrl);
+		if (targetSprite != null)
+			sprite_apperance.sprite = targetSprite;
 	}
+
+	public void SetCanPick (bool canPick)
+	{
+		this.canPick = canPick;
+		sprite_apperance.color = canPick ? Color.red : Color.white;
+	}
+
+	#region IPointerClickHandler implementation
+
+	public void OnPointerClick (PointerEventData eventData)
+	{
+		print (name);
+		if (canPick) {
+			GameManager.Instance.gamePlayManager.accountManager.OnPickUpItem (this);
+		}
+	}
+
+	#endregion
+
 }
