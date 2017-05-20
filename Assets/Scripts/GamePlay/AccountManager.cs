@@ -47,20 +47,20 @@ public class AccountManager : MonoBehaviour
 		int playerIndex = thisPlayerIndexCardInfo.playerIndex;
 
 		PlayerManager thisPlayerManager = GameManager.Instance.gamePlayManager.playerInGameManager.GetAlivePlayerManagerByIndex (playerIndex);
-		text_PlayerAction.text = "玩家" + playerIndex + ":" + thisPlayerManager.m_Player.playerName + " " + cardInfo.accountDescription;
+		text_PlayerAction.text = "玩家" + (playerIndex + 1) + ":" + thisPlayerManager.Player.playerName + " " + cardInfo.accountDescription;
 
 		cardToPlayer (cardInfo, thisPlayerManager);
 	}
 
 	void cardToPlayer (CardInfo card, PlayerManager player)
 	{
-		TrainConnection thisPlayerTrainConnection = player.m_trainPosition;
+		TrainConnection thisPlayerTrainConnection = player.PlayerMoveController.PlayerTrainConnection;
 
 		switch (card.cardType) {
 		case CardType.Up:
 
 			if (thisPlayerTrainConnection.nearbyTrain_Up != null) {
-				player.Move (thisPlayerTrainConnection.nearbyTrain_Up);
+				player.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Up);
 				StartCoroutine ("delaySubmitPanel", "移动完成");
 			} else {
 				StartCoroutine ("delaySubmitPanel", "移动失败");
@@ -72,7 +72,7 @@ public class AccountManager : MonoBehaviour
 		case CardType.Down:
 
 			if (thisPlayerTrainConnection.nearbyTrain_Down != null) {
-				player.Move (thisPlayerTrainConnection.nearbyTrain_Down);
+				player.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Down);
 				StartCoroutine ("delaySubmitPanel", "移动完成");
 			} else {
 				StartCoroutine ("delaySubmitPanel", "移动失败");
@@ -83,7 +83,7 @@ public class AccountManager : MonoBehaviour
 		case CardType.Left:
 
 			if (thisPlayerTrainConnection.nearbyTrain_Left != null) {
-				player.Move (thisPlayerTrainConnection.nearbyTrain_Left);
+				player.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Left);
 				StartCoroutine ("delaySubmitPanel", "移动完成");
 			} else {
 				StartCoroutine ("delaySubmitPanel", "移动失败");
@@ -93,7 +93,7 @@ public class AccountManager : MonoBehaviour
 		case CardType.Right:
 
 			if (thisPlayerTrainConnection.nearbyTrain_Right != null) {
-				player.Move (thisPlayerTrainConnection.nearbyTrain_Right);
+				player.PlayerMoveController.Move (thisPlayerTrainConnection.nearbyTrain_Right);
 				StartCoroutine ("delaySubmitPanel", "移动完成");
 			} else {
 				StartCoroutine ("delaySubmitPanel", "移动失败");

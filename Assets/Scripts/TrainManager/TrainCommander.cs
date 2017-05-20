@@ -20,7 +20,7 @@ public class TrainCommander : MonoBehaviour
 	public void InitAllManager ()
 	{
 		for (int i = 0; i < trainManagerArr.Length; i++) {
-			trainManagerArr [i].InitItem (trainPropertiesManager);
+			trainManagerArr [i].Init (trainPropertiesManager);
 		}
 	}
 

@@ -7,18 +7,29 @@ public class TrainManager : MonoBehaviour
 {
 	[SerializeField] bool isRoof;
 	[SerializeField] bool isHead;
+	[SerializeField] TrainConnection trainConnection;
 	TrainPropertiesManager trainProperties;
 
-	List<ItemHolder> allItemList;
+	[SerializeField] List<ItemHolder> allItemHolderList;
+	[SerializeField] List<PlayerManager> allPlayerManagerList;
+
+	#region Getter
 
 	public bool IsRoof { get { return isRoof; } }
 
 	public bool IsHead { get { return isHead; } }
 
-	public void InitItem (TrainPropertiesManager targetTrainProperties)
+	public TrainConnection ThisTrainConnection { get { return trainConnection; } }
+
+	#endregion
+
+	public void Init (TrainPropertiesManager targetTrainProperties)
 	{
+		trainConnection.trainManager = this;
+		allItemHolderList = new List<ItemHolder> ();
+		allPlayerManagerList = new List<PlayerManager> ();
+
 		trainProperties = targetTrainProperties;
-		allItemList = new List<ItemHolder> ();
 
 		if (isRoof)
 			return;
@@ -29,7 +40,7 @@ public class TrainManager : MonoBehaviour
 			newItem.name = largePackageInfo.itemName;
 			ItemHolder newItemHolder = newItem.GetComponent<ItemHolder> ();
 			newItemHolder.SetItemInfo (largePackageInfo);
-			LoadItem (newItemHolder);
+			StoreItem (newItemHolder);
 		} else {
 			ItemInfo packageInfo = trainProperties.itemInfoArr [0];
 			for (int i = 0; i < trainProperties.packageCountPerTrain; i++) {
@@ -37,7 +48,7 @@ public class TrainManager : MonoBehaviour
 				newItem.name = packageInfo.itemName;
 				ItemHolder newItemHolder = newItem.GetComponent<ItemHolder> ();
 				newItemHolder.SetItemInfo (packageInfo);
-				LoadItem (newItemHolder);
+				StoreItem (newItemHolder);
 			}
 
 			ItemInfo diamondInfo = trainProperties.itemInfoArr [1];
@@ -46,27 +57,38 @@ public class TrainManager : MonoBehaviour
 				newItem.name = diamondInfo.itemName;
 				ItemHolder newItemHolder = newItem.GetComponent<ItemHolder> ();
 				newItemHolder.SetItemInfo (diamondInfo);
-				LoadItem (newItemHolder);
+				StoreItem (newItemHolder);
 			}
 		}
 	}
 
-	public void LoadItem (ItemHolder targetItem)
+	public void StoreItem (ItemHolder targetItem)
 	{
-		allItemList.Add (targetItem);
+		allItemHolderList.Add (targetItem);
 		targetItem.transform.parent = transform;
 
-		ItemHolder[] allChildItemArr = GetComponentsInChildren<ItemHolder> ();
-		if (allChildItemArr != null) {
-			for (int i = 0; i < allChildItemArr.Length; i++) {
-				allChildItemArr [i].transform.localPosition = Vector3.zero + Vector3.right * 0.02f * (allChildItemArr.Length / 2);
-				allChildItemArr [i].transform.localPosition += Vector3.left * 0.02f * i;
+		if (allItemHolderList != null) {
+			for (int i = 0; i < allItemHolderList.Count; i++) {
+				allItemHolderList [i].transform.localPosition = Vector3.zero + Vector3.right * 0.02f * (allItemHolderList.Count / 2);
+				allItemHolderList [i].transform.localPosition += Vector3.left * 0.02f * i;
+			}
+		}
+	}
+
+	public void StorePlayer (PlayerManager targetPlayerManager)
+	{
+		allPlayerManagerList.Add (targetPlayerManager);
+
+		if (allPlayerManagerList != null) {
+			for (int i = 0; i < allPlayerManagerList.Count; i++) {
+				allPlayerManagerList [i].PlayerMoveController.standPos = transform.position + Vector3.right * 0.5f * (allPlayerManagerList.Count / 2);
+				allPlayerManagerList [i].PlayerMoveController.standPos += Vector3.left * 0.5f * i;
 			}
 		}
 	}
 
 	public List<ItemHolder> GetAllItem ()
 	{
-		return allItemList;
+		return allItemHolderList;
 	}
 }

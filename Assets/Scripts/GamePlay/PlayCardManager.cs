@@ -38,7 +38,7 @@ public class PlayCardManager : MonoBehaviour
 		text_RoundInfo.text = "出牌" + "   第" + curRound + "轮/共" + maxRound + "轮" + "   牌面向" + (isUp ? "上" : "下");
 	}
 
-	public void PlayerPlay (int playerIndex, PlayerInfo playerInfo, CardInfo[] playerStoreCardArr)
+	public void NextPlayerPlay (int playerIndex, PlayerInfo playerInfo, CardInfo[] playerStoreCardArr)
 	{
 		if (!Panel_PlayCard.activeSelf)
 			Panel_PlayCard.SetActive (true);

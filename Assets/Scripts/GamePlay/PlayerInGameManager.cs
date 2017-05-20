@@ -54,7 +54,7 @@ public class PlayerInGameManager : MonoBehaviour
 
 			//new train
 			TrainConnection newStartTrainConnection = GameManager.Instance.gamePlayManager.trainCommander.GetRandomPlayerStartTrainConnection ();
-			newPlayerManager.Move (newStartTrainConnection);
+			newPlayerManager.PlayerMoveController.Move (newStartTrainConnection);
 		}
 
 	}
@@ -81,6 +81,6 @@ public class PlayerInGameManager : MonoBehaviour
 
 	void playerPlayInTurn ()
 	{
-		allPlayerDict [curPlayerIndex].PlayCard ();
+		allPlayerDict [curPlayerIndex].PlayerCardController.PlayCard ();
 	}
 }
