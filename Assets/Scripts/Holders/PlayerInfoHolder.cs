@@ -18,7 +18,6 @@ public class PlayerInfoHolder : MonoBehaviour
 			image_Portrait.sprite = Resources.Load<Sprite> (playerInfo.character.portraitUrl);
 
 		text_PlayerName.text = playerInfo.playerName;
-		text_BulletCount.text = "6/6";
 	}
 
 	public void UpdateHealth (float targetAmount)
@@ -37,8 +36,8 @@ public class PlayerInfoHolder : MonoBehaviour
 		}
 	}
 
-	public void UpdateBulletCount (int ownBulletCount)
+	public void UpdateBulletCount (int ownBulletCount, int maxBulletCount)
 	{
-		text_BulletCount.text = ownBulletCount + "/6";
+		text_BulletCount.text = ownBulletCount + "/" + maxBulletCount;
 	}
 }

@@ -15,7 +15,9 @@ public class PoliceManager : MonoBehaviour
 
 	[SerializeField] TrainConnection trainConnection;
 
-	public TrainConnection PlayerTrainConnection{ get { return trainConnection; } }
+	public TrainConnection PoliceTrainConnection { get { return trainConnection; } }
+
+	public Vector3 PolicePosition { get { return playerTrans.position; } }
 
 	void Update ()
 	{
@@ -32,6 +34,7 @@ public class PoliceManager : MonoBehaviour
 
 		List<PlayerManager> thisTrainPlayerManagerList = trainConnection.trainManager.GetAllPlayerManager;
 		for (int i = 0; i < thisTrainPlayerManagerList.Count; i++) {
+			print (thisTrainPlayerManagerList [i].name);
 			thisTrainPlayerManagerList [i].PlayerHealthController.TakeDamage ();
 			thisTrainPlayerManagerList [i].PlayerCardController.AddOneUselessBulletCard ();
 		}

@@ -29,7 +29,7 @@ public class AccountManager : MonoBehaviour
 			panel_Account.SetActive (true);
 
 		thisRoundPlayerIndexCardInfoQueue = GameManager.Instance.gamePlayManager.playCardManager.holeGameCardQueue;
-
+		print ("StartAccount");
 		nextCard ();
 	}
 
@@ -43,6 +43,7 @@ public class AccountManager : MonoBehaviour
 		thisAccountPlayerManager.SetPlay (false);
 		Destroy (thisAccountCardHolder.gameObject);
 
+		print (thisRoundPlayerIndexCardInfoQueue.Count);
 		if (thisRoundPlayerIndexCardInfoQueue.Count > 0) {
 			nextCard ();
 		} else {
@@ -71,7 +72,7 @@ public class AccountManager : MonoBehaviour
 
 		} else if (thisAccountCardInfo.cardType == CardType.Shot) {
 
-			thisAccountPlayerManager.PlayerCardController.RemoveOneBulletCard ();
+			thisAccountPlayerManager.PlayerBulletController.RemoveOneBullet ();
 
 			beHitPlayerManager.PlayerHealthController.TakeDamage ();
 			beHitPlayerManager.PlayerCardController.AddOneUselessBulletCard ();
@@ -102,8 +103,9 @@ public class AccountManager : MonoBehaviour
 		thisAccountCardInfo = thisAccountCardHolder.Card;
 		int playerIndex = thisPlayerIndexCardInfo.playerIndex;
 		thisAccountPlayerManager = GameManager.Instance.gamePlayManager.playerInGameManager.GetPlayerManagerByIndex (playerIndex);
-		cardToPlayer (thisAccountCardInfo, thisAccountPlayerManager);
 
+		GameManager.Instance.gamePlayManager.cameraController.ForcusOnPos (thisAccountPlayerManager.PlayerRenderer.transform.position);
+		cardToPlayer (thisAccountCardInfo, thisAccountPlayerManager);
 		reactionManager.UpdatePlayerAction (playerIndex, thisAccountPlayerManager.ThisPlayerInfo.playerName, thisAccountCardInfo.accountDescription);
 	}
 
@@ -179,7 +181,7 @@ public class AccountManager : MonoBehaviour
 			break;
 		case CardType.Shot:
 
-			if (thisAccountPlayerManager.PlayerCardController.BulletCardCount <= 0) {
+			if (thisAccountPlayerManager.PlayerBulletController.BulletCount <= 0) {
 				reactionManager.SetNoBullet ();
 				return;
 			}
@@ -217,6 +219,7 @@ public class AccountManager : MonoBehaviour
 			if (policeManager == null)
 				policeManager = FindObjectOfType<PoliceManager> ();
 
+			GameManager.Instance.gamePlayManager.cameraController.ForcusOnPos (policeManager.PolicePosition);
 			policeManager.ShowPath ();
 
 			break;

@@ -10,8 +10,8 @@ public class GamePlayManager : MonoBehaviour
 	public PlayCardManager playCardManager;
 	public AccountManager accountManager;
 	public RankManager rankManager;
-
-	[SerializeField] SpriteRenderer sceneBg;
+	public BgManager bgManager;
+	public CameraController cameraController;
 
 	[Header ("Infos")]
 	[SerializeField] CharacterInfo[] basicCharacterArr;
@@ -47,6 +47,11 @@ public class GamePlayManager : MonoBehaviour
 	void Awake ()
 	{
 		GameManager.Instance.OnProgressChange += onProgressChange;
+	}
+
+	void OnDestroy ()
+	{
+		GameManager.Instance.OnProgressChange -= onProgressChange;
 	}
 
 	public void Init (PlayerInfo[] allPlayerArr, SceneInfo[] gameSceneArr)
@@ -92,7 +97,6 @@ public class GamePlayManager : MonoBehaviour
 			nextGame ();
 		} else {
 			rankManager.DoRank (playerInGameManager.AllPlayerDict);
-			print ("youxijieshu");
 		}
 	}
 
@@ -102,7 +106,7 @@ public class GamePlayManager : MonoBehaviour
 			return;
 
 		curNumOfGame++;
-		sceneBg.sprite = Resources.Load<Sprite> (gameSceneArr [curNumOfGame - 1].bgUrl);
+		bgManager.UpdateBg (Resources.Load<Sprite> (gameSceneArr [curNumOfGame - 1].bgUrl));
 		playCardManager.NextGame ();
 
 		maxRound = gameSceneArr [curNumOfGame - 1].cardSideArr.Length;
@@ -119,7 +123,6 @@ public class GamePlayManager : MonoBehaviour
 		} else {
 			playCardManager.PlayCardFinish ();
 			accountManager.StartThisRoundAccount ();
-			print ("AASDASF");
 		}
 	}
 

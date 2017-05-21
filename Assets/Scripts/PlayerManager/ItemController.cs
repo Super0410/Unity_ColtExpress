@@ -34,6 +34,7 @@ public class ItemController : MonoBehaviour
 
 			playerUIManager.UpdateItem (holdItemHolderStack.ToArray ());
 		}
+		StartCoroutine (animationTakePunch ());
 		return lastItemHolder;
 	}
 
@@ -43,5 +44,23 @@ public class ItemController : MonoBehaviour
 		for (int i = 0; i < targetItemHolderArr.Length; i++) {
 			moneyCount += targetItemHolderArr [i].ThisItemInfo.moneyCount;
 		}
+	}
+
+	IEnumerator animationTakePunch ()
+	{
+		GetComponent<PlayerManager> ().isAnimating = true;
+		float animTime = 0.3f;
+		float animSpeed = 1 / animTime;
+		float percent = 0;
+		Vector3 prePos = transform.position;
+		Vector3 animPos = transform.position;
+		while (percent < 1) {
+			percent += animSpeed * Time.deltaTime;
+			animPos.y = Mathf.Sin (3.14f * percent) * 0.5f;
+			transform.position = animPos;
+			yield return null;
+		}
+		transform.position = prePos;
+		GetComponent<PlayerManager> ().isAnimating = false;
 	}
 }

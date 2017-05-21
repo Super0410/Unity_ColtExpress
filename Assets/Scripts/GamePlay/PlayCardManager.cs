@@ -46,8 +46,10 @@ public class PlayCardManager : MonoBehaviour
 
 		if (playerManager.IsDie) {
 			GameManager.Instance.gamePlayManager.OnePlayerFinishPlay (thisPlayerIndex);
+			print ("dead");
 			return;
 		}
+		GameManager.Instance.gamePlayManager.cameraController.ForcusOnPos (playerManager.PlayerRenderer.transform.position);
 		
 		Mask_PlayerIdentity.SetActive (true);
 

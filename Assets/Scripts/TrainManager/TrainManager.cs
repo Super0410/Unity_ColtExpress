@@ -24,7 +24,13 @@ public class TrainManager : MonoBehaviour
 
 	public List<ItemHolder> GetAllItemHolder { get { return allItemHolderList; } }
 
-	public List<PlayerManager> GetAllPlayerManager{ get { return allPlayerManagerList; } }
+	public List<PlayerManager> GetAllPlayerManager {
+		get {
+			List<PlayerManager> temp = new List<PlayerManager> ();
+			temp.AddRange (allPlayerManagerList);
+			return temp;
+		}
+	}
 
 	#endregion
 
@@ -82,8 +88,8 @@ public class TrainManager : MonoBehaviour
 
 		if (allItemHolderList != null) {
 			for (int i = 0; i < allItemHolderList.Count; i++) {
-				allItemHolderList [i].transform.localPosition = Vector3.zero + Vector3.right * 0.02f * ((float)allItemHolderList.Count / 2);
-				allItemHolderList [i].transform.localPosition += Vector3.left * 0.02f * i;
+				allItemHolderList [i].transform.localPosition = Vector3.zero + Vector3.right * 0.4f * ((float)allItemHolderList.Count / 2);
+				allItemHolderList [i].transform.localPosition += Vector3.left * 0.4f * i;
 			}
 		}
 	}
@@ -123,5 +129,16 @@ public class TrainManager : MonoBehaviour
 	public void LeavePolice ()
 	{
 		policeManager = null;
+	}
+
+	public void TrainShake ()
+	{
+		if (allPlayerManagerList != null) {
+			for (int i = 0; i < allPlayerManagerList.Count; i++) {
+				allPlayerManagerList [i].ShakeWithTrain ();
+			}
+		}
+		if (trainConnection.nearbyTrain_Up != null)
+			trainConnection.nearbyTrain_Up.trainManager.TrainShake ();
 	}
 }
