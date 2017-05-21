@@ -17,6 +17,7 @@ public class PlayCardManager : MonoBehaviour
 	bool thisRoundIsUp;
 	int thisPlayerIndex;
 	string thisPlayerInfoText;
+	PlayerManager thisPlayerManager;
 	CardInfo[] thisPlayerGenerateCardArr;
 	List<CardHolder> thisPlayerRoundCardList;
 
@@ -38,14 +39,21 @@ public class PlayCardManager : MonoBehaviour
 		text_RoundInfo.text = "出牌" + "   第" + curRound + "轮/共" + maxRound + "轮" + "   牌面向" + (isUp ? "上" : "下");
 	}
 
-	public void NextPlayerPlay (int playerIndex, PlayerInfo playerInfo, CardInfo[] playerStoreCardArr)
+	public void NextPlayerPlay (int playerIndex, PlayerInfo playerInfo, PlayerManager playerManager, CardInfo[] playerStoreCardArr)
 	{
 		if (!Panel_PlayCard.activeSelf)
 			Panel_PlayCard.SetActive (true);
+
+		if (playerManager.IsDie) {
+			GameManager.Instance.gamePlayManager.OnePlayerFinishPlay (thisPlayerIndex);
+			return;
+		}
 		
 		Mask_PlayerIdentity.SetActive (true);
 
 		thisPlayerIndex = playerIndex;
+		thisPlayerManager = playerManager;
+		thisPlayerManager.SetPlay (true);
 
 		thisPlayerInfoText = (playerIndex + 1).ToString () + "：" + playerInfo.playerName;
 		text_PlayerInfo.text = "玩家" + thisPlayerInfoText;
@@ -119,6 +127,7 @@ public class PlayCardManager : MonoBehaviour
 			}
 		}
 
+		thisPlayerManager.SetPlay (false);
 		holeGameCardQueue.Enqueue (new PlayerIndexCardHolderMap (thisPlayerIndex, targetCardHolder));
 		GameManager.Instance.gamePlayManager.OnePlayerFinishPlay (thisPlayerIndex);
 	}

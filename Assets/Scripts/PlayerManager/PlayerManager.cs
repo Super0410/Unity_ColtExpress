@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 [RequireComponent (typeof(HealthController))]
@@ -12,6 +13,8 @@ public class PlayerManager : MonoBehaviour, IPointerClickHandler, IMarkable
 	[SerializeField] int playerIndex;
 	[SerializeField] PlayerInfo playerInfo;
 	[SerializeField] Transform playerTrans;
+	[SerializeField] Text text_PlayerName;
+	[SerializeField] GameObject playSymbol;
 
 	[Header ("Health")]
 	[SerializeField] HealthController healthController;
@@ -28,8 +31,11 @@ public class PlayerManager : MonoBehaviour, IPointerClickHandler, IMarkable
 
 	SpriteRenderer playerRenderer;
 	bool canBeHit;
+	bool isDie;
 
 	#region Getter
+
+	public bool IsDie{ get { return isDie; } }
 
 	public PlayerInfo Player { get { return playerInfo; } }
 
@@ -57,13 +63,29 @@ public class PlayerManager : MonoBehaviour, IPointerClickHandler, IMarkable
 		playerInfo = targetPlayerInfo;
 		playerRenderer = playerTrans.GetComponent<SpriteRenderer> ();
 		playerRenderer.sprite = Resources.Load<Sprite> (targetPlayerInfo.character.spriteUrl);
+		text_PlayerName.text = (playerIndex + 1) + ":" + playerInfo.playerName;
 
-		healthController.Init (totalHealth, targetPlayerInfoHolder);
-		cardController.Init (playerIndex, playerInfo, targetCardList, targetPlayCardManager);
+		healthController.Init (totalHealth, this, targetPlayerInfoHolder);
+		cardController.Init (playerIndex, playerInfo, this, targetPlayerInfoHolder, targetCardList, targetPlayCardManager);
 		moveController.Init (this);
 		moveController.Move (targetTrainConnection);
 		itemController.Init (targetPlayerInfoHolder);
 		itemController.StoreItem (targetItemHolder);
+
+		SetPlay (false);
+	}
+
+	public void SetPlay (bool isPlay)
+	{
+		playSymbol.SetActive (isPlay);
+	}
+
+	public void PlayerDie ()
+	{
+		isDie = true;
+		moveController.PlayerTrainConnection.trainManager.LeavePlayer (this);
+		playerRenderer.sprite = null;
+		text_PlayerName.color = Color.red;
 	}
 
 	#region IMarkable implementation

@@ -39,7 +39,9 @@ public class AccountManager : MonoBehaviour
 
 	public void OnPickUpItem (ItemHolder pickedItemHolder)
 	{
+		thisAccountPlayerManager.SetPlay (false);
 		SetMarkableMark (thisAccountItemHolderList.ToArray (), false);
+
 		thisAccountPlayerManager.PlayerItemController.StoreItem (pickedItemHolder);
 		thisAccountPlayerStandTrainManager.PickUpItem (pickedItemHolder);
 
@@ -48,6 +50,7 @@ public class AccountManager : MonoBehaviour
 
 	public void OnPlayerBeHit (PlayerManager beHitPlayerManager)
 	{
+		thisAccountPlayerManager.SetPlay (false);
 		SetMarkableMark (thisAccountCanAttackPlayerManagerList.ToArray (), false);
 
 		if (thisAccountCardInfo.cardType == CardType.Punch) {
@@ -57,7 +60,10 @@ public class AccountManager : MonoBehaviour
 
 		} else if (thisAccountCardInfo.cardType == CardType.Shot) {
 
+			thisAccountPlayerManager.PlayerCardController.RemoveOneBulletCard ();
+
 			beHitPlayerManager.PlayerHealthController.TakeDamage ();
+			beHitPlayerManager.PlayerCardController.AddOneUselessBulletCard ();
 
 		} else {
 			print ("Wrong in PlayerHit");
@@ -89,6 +95,12 @@ public class AccountManager : MonoBehaviour
 	{
 		TrainConnection thisPlayerStandTrainConnection = thisPlayer.PlayerMoveController.PlayerTrainConnection;
 		thisAccountPlayerStandTrainManager = thisPlayerStandTrainConnection.trainManager;
+
+		if (thisPlayer.IsDie) {
+			reactionManager.SetPlayerDie ();
+			return;
+		}
+		thisAccountPlayerManager.SetPlay (true);
 
 		switch (card.cardType) {
 		case CardType.Up:
@@ -153,6 +165,11 @@ public class AccountManager : MonoBehaviour
 			break;
 		case CardType.Shot:
 
+			if (thisAccountPlayerManager.PlayerCardController.BulletCardCount <= 0) {
+				reactionManager.SetNoBullet ();
+				return;
+			}
+
 			if (thisAccountPlayerStandTrainManager.IsRoof) {
 				List<TrainManager> roofTrainManagerList = GameManager.Instance.gamePlayManager.trainCommander.RoofTrainManagerList;
 
@@ -174,8 +191,11 @@ public class AccountManager : MonoBehaviour
 					}
 				}
 			}
-
-			SetMarkableMark (thisAccountCanAttackPlayerManagerList.ToArray (), thisPlayer, true);
+			if (thisAccountCanAttackPlayerManagerList.Count > 0) {
+				SetMarkableMark (thisAccountCanAttackPlayerManagerList.ToArray (), thisPlayer, true);
+			} else {
+				reactionManager.SetActionFail (CardType.Shot);
+			}
 
 			break;
 		case CardType.Police:

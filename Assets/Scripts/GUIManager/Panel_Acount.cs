@@ -61,6 +61,16 @@ public class Panel_Acount : MonoBehaviour
 		}
 	}
 
+	public void SetPlayerDie ()
+	{
+		StartCoroutine ("delaySubmitPanel", "行为失败，玩家已死亡");
+	}
+
+	public void SetNoBullet ()
+	{
+		StartCoroutine ("delaySubmitPanel", "行为失败，子弹已用尽");
+	}
+
 	public void SetActionSuccess ()
 	{
 		StartCoroutine ("delaySubmitPanel", "成功");

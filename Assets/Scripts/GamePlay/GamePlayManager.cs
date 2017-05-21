@@ -15,11 +15,14 @@ public class GamePlayManager : MonoBehaviour
 	[Header ("Infos")]
 	[SerializeField] CharacterInfo[] basicCharacterArr;
 	[SerializeField] Card[] basicCardArr;
+	[SerializeField] CardInfo uselessBulletCardInfo;
 	[SerializeField] SceneInfo[] basicSceneInfoArr;
 	[Header ("0:Package 1:Diamond 2:LargePackage 3:PlayerInit")]
 	[SerializeField] ItemInfo[] basicItemInfoArr;
 
 	#region Getter
+
+	public CardInfo UselessBulletCardInfo{ get { return uselessBulletCardInfo; } }
 
 	public CharacterInfo[] BasicCharacterInfoArr{ get { return basicCharacterArr; } }
 

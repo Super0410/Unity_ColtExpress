@@ -18,11 +18,12 @@ public class PlayerInfoHolder : MonoBehaviour
 			image_Portrait.sprite = Resources.Load<Sprite> (playerInfo.character.portraitUrl);
 
 		text_PlayerName.text = playerInfo.playerName;
-		text_BulletCount.text = "1/6";
+		text_BulletCount.text = "6/6";
 	}
 
 	public void UpdateHealth (float targetAmount)
 	{
+		print (targetAmount);
 		image_HealthBar.fillAmount = targetAmount;
 	}
 
@@ -33,5 +34,10 @@ public class PlayerInfoHolder : MonoBehaviour
 		for (int i = 0; i < newItemImageArr.Length; i++) {
 			newItemImageArr [i].sprite = Resources.Load<Sprite> (targetItemHolderArr [i].ThisItemInfo.itemUrl);
 		}
+	}
+
+	public void UpdateBulletCount (int ownBulletCount)
+	{
+		text_BulletCount.text = ownBulletCount + "/6";
 	}
 }

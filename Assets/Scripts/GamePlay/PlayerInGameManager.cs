@@ -29,6 +29,10 @@ public class PlayerInGameManager : MonoBehaviour
 		playerHolder.parent = transform;
 
 		for (int i = 0; i < allPlayerArr.Length; i++) {
+			//new card list;
+			List<CardInfo> newCardInfoList = new List<CardInfo> ();
+			newCardInfoList.AddRange (allStoreCardList);
+
 			//new player
 			GameObject newPlayerGObj = Instantiate (playerPrefab.gameObject) as GameObject;
 			newPlayerGObj.name = allPlayerArr [i].playerName;
@@ -49,7 +53,7 @@ public class PlayerInGameManager : MonoBehaviour
 			newItemHolder.SetItemInfo (newItemInfo);
 
 			PlayerManager newPlayerManager = newPlayerGObj.GetComponent<PlayerManager> ();
-			newPlayerManager.Init (i, allPlayerArr [i], newPlayerInfoHolder, allStoreCardList, playCardManager
+			newPlayerManager.Init (i, allPlayerArr [i], newPlayerInfoHolder, newCardInfoList, playCardManager
 				, newStartTrainConnection, newItemHolder);
 
 			allPlayerDict.Add (i, newPlayerManager);

@@ -6,12 +6,14 @@ public class HealthController : MonoBehaviour
 {
 	[SerializeField] int totalHealth = 3;
 	[SerializeField] int curHealth;
+	PlayerManager playerManager;
 	PlayerInfoHolder playerInfoManager;
 
-	public void Init (int targetTotalHealth, PlayerInfoHolder targetPlayerInfoManager)
+	public void Init (int targetTotalHealth, PlayerManager targetPlayerManager, PlayerInfoHolder targetPlayerInfoManager)
 	{
 		totalHealth = targetTotalHealth;
 		curHealth = totalHealth;
+		playerManager = targetPlayerManager;
 		playerInfoManager = targetPlayerInfoManager;
 	}
 
@@ -26,6 +28,6 @@ public class HealthController : MonoBehaviour
 
 	void playerDie ()
 	{
-
+		playerManager.PlayerDie ();
 	}
 }
