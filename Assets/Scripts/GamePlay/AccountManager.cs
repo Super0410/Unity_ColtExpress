@@ -9,19 +9,21 @@ public class AccountManager : MonoBehaviour
 
 	Queue<PlayerIndexCardHolderMap> thisRoundPlayerIndexCardInfoQueue;
 
-	CardInfo thisAccountCardInfo;
+	[SerializeField] CardInfo thisAccountCardInfo;
 	CardHolder thisAccountCardHolder;
 	PlayerManager thisAccountPlayerManager;
 	TrainManager thisAccountPlayerStandTrainManager;
 	List<ItemHolder> thisAccountItemHolderList;
 	List<PlayerManager> thisAccountCanAttackPlayerManagerList;
 
+	PoliceManager policeManager;
+
 	void Start ()
 	{
 		panel_Account.SetActive (false);
 	}
 
-	public void StartAccount ()
+	public void StartThisRoundAccount ()
 	{
 		if (!panel_Account.activeSelf)
 			panel_Account.SetActive (true);
@@ -31,15 +33,25 @@ public class AccountManager : MonoBehaviour
 		nextCard ();
 	}
 
+	public void FinishThisRoundAccount ()
+	{
+		panel_Account.SetActive (false);
+	}
+
 	public void FinishOneCard ()
 	{
+		thisAccountPlayerManager.SetPlay (false);
 		Destroy (thisAccountCardHolder.gameObject);
-		nextCard ();
+
+		if (thisRoundPlayerIndexCardInfoQueue.Count > 0) {
+			nextCard ();
+		} else {
+			GameManager.Instance.gamePlayManager.OneRoundFinish ();
+		}
 	}
 
 	public void OnPickUpItem (ItemHolder pickedItemHolder)
 	{
-		thisAccountPlayerManager.SetPlay (false);
 		SetMarkableMark (thisAccountItemHolderList.ToArray (), false);
 
 		thisAccountPlayerManager.PlayerItemController.StoreItem (pickedItemHolder);
@@ -50,7 +62,6 @@ public class AccountManager : MonoBehaviour
 
 	public void OnPlayerBeHit (PlayerManager beHitPlayerManager)
 	{
-		thisAccountPlayerManager.SetPlay (false);
 		SetMarkableMark (thisAccountCanAttackPlayerManagerList.ToArray (), false);
 
 		if (thisAccountCardInfo.cardType == CardType.Punch) {
@@ -71,6 +82,11 @@ public class AccountManager : MonoBehaviour
 		reactionManager.SetActionSuccess ();
 	}
 
+	public void OnPoliceMoveFinish ()
+	{
+		reactionManager.SetActionSuccess ();
+	}
+
 	void nextCard ()
 	{
 		thisAccountCardHolder = null;
@@ -85,10 +101,10 @@ public class AccountManager : MonoBehaviour
 		thisAccountCardHolder = thisPlayerIndexCardInfo.cardHolder;
 		thisAccountCardInfo = thisAccountCardHolder.Card;
 		int playerIndex = thisPlayerIndexCardInfo.playerIndex;
-		thisAccountPlayerManager = GameManager.Instance.gamePlayManager.playerInGameManager.GetAlivePlayerManagerByIndex (playerIndex);
+		thisAccountPlayerManager = GameManager.Instance.gamePlayManager.playerInGameManager.GetPlayerManagerByIndex (playerIndex);
 		cardToPlayer (thisAccountCardInfo, thisAccountPlayerManager);
 
-		reactionManager.UpdatePlayerAction (playerIndex, thisAccountPlayerManager.Player.playerName, thisAccountCardInfo.accountDescription);
+		reactionManager.UpdatePlayerAction (playerIndex, thisAccountPlayerManager.ThisPlayerInfo.playerName, thisAccountCardInfo.accountDescription);
 	}
 
 	void cardToPlayer (CardInfo card, PlayerManager thisPlayer)
@@ -111,8 +127,7 @@ public class AccountManager : MonoBehaviour
 			} else {
 				reactionManager.SetActionFail (CardType.Up);
 			}
-
-
+				
 			break;
 		case CardType.Down:
 
@@ -122,7 +137,6 @@ public class AccountManager : MonoBehaviour
 			} else {
 				reactionManager.SetActionFail (CardType.Down);
 			}
-
 
 			break;
 		case CardType.Left:
@@ -200,6 +214,10 @@ public class AccountManager : MonoBehaviour
 			break;
 		case CardType.Police:
 
+			if (policeManager == null)
+				policeManager = FindObjectOfType<PoliceManager> ();
+
+			policeManager.ShowPath ();
 
 			break;
 		}

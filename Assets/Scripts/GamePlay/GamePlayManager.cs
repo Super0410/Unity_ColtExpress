@@ -9,6 +9,7 @@ public class GamePlayManager : MonoBehaviour
 	public PlayerInGameManager playerInGameManager;
 	public PlayCardManager playCardManager;
 	public AccountManager accountManager;
+	public RankManager rankManager;
 
 	[SerializeField] SpriteRenderer sceneBg;
 
@@ -20,6 +21,9 @@ public class GamePlayManager : MonoBehaviour
 	[Header ("0:Package 1:Diamond 2:LargePackage 3:PlayerInit")]
 	[SerializeField] ItemInfo[] basicItemInfoArr;
 
+	[Header ("Police")]
+	[SerializeField] PoliceManager policeManager;
+
 	#region Getter
 
 	public CardInfo UselessBulletCardInfo{ get { return uselessBulletCardInfo; } }
@@ -29,6 +33,8 @@ public class GamePlayManager : MonoBehaviour
 	public SceneInfo[] BasicSceneInfoArr{ get { return basicSceneInfoArr; } }
 
 	public ItemInfo[] BasicItemInfoArr{ get { return basicItemInfoArr; } }
+
+	public GameObject PolicePrefab{ get { return policeManager.gameObject; } }
 
 	#endregion
 
@@ -78,6 +84,18 @@ public class GamePlayManager : MonoBehaviour
 		}
 	}
 
+	public void OneRoundFinish ()
+	{
+		accountManager.FinishThisRoundAccount ();
+
+		if (curNumOfGame < maxNumOfGame) {
+			nextGame ();
+		} else {
+			rankManager.DoRank (playerInGameManager.AllPlayerDict);
+			print ("youxijieshu");
+		}
+	}
+
 	void nextGame ()
 	{
 		if (curNumOfGame >= maxNumOfGame)
@@ -94,17 +112,15 @@ public class GamePlayManager : MonoBehaviour
 
 	void nextRound ()
 	{
-		if (curRound >= maxRound) {
-
+		if (curRound < maxRound) {
+			curRound++;
+			playCardManager.SetNewRound (curRound, maxRound, gameSceneArr [curNumOfGame - 1].cardSideArr [curRound - 1]);
+			playerInGameManager.NextRoundPlay ();
+		} else {
 			playCardManager.PlayCardFinish ();
-			accountManager.StartAccount ();
+			accountManager.StartThisRoundAccount ();
 			print ("AASDASF");
-			return;
 		}
-		
-		curRound++;
-		playCardManager.SetNewRound (curRound, maxRound, gameSceneArr [curNumOfGame - 1].cardSideArr [curRound - 1]);
-		playerInGameManager.NextRoundPlay ();
 	}
 
 	void onProgressChange (GameManager.ProgressType targetProgress)

@@ -11,8 +11,9 @@ public class PlayerInGameManager : MonoBehaviour
 	[SerializeField] ItemHolder itemHolderPrefab;
 
 	Dictionary<int, PlayerManager> allPlayerDict = new Dictionary<int, PlayerManager> ();
-	Dictionary<int, PlayerManager> alivePlayerDict = new Dictionary<int, PlayerManager> ();
 	int curPlayerIndex;
+
+	public Dictionary<int, PlayerManager> AllPlayerDict { get { return allPlayerDict; } }
 
 	public void Init (PlayerInfo[] allPlayerArr, List<CardInfo> allStoreCardList, PlayCardManager playCardManager)
 	{
@@ -57,16 +58,15 @@ public class PlayerInGameManager : MonoBehaviour
 				, newStartTrainConnection, newItemHolder);
 
 			allPlayerDict.Add (i, newPlayerManager);
-			alivePlayerDict.Add (i, newPlayerManager);
 
 		}
 
 	}
 
-	public PlayerManager GetAlivePlayerManagerByIndex (int targetPlayerIndex)
+	public PlayerManager GetPlayerManagerByIndex (int targetPlayerIndex)
 	{
-		if (alivePlayerDict.ContainsKey (targetPlayerIndex)) {
-			return alivePlayerDict [targetPlayerIndex];
+		if (allPlayerDict.ContainsKey (targetPlayerIndex)) {
+			return allPlayerDict [targetPlayerIndex];
 		} else
 			return null;
 	}

@@ -12,6 +12,8 @@ public class TrainManager : MonoBehaviour
 	[SerializeField] List<ItemHolder> allItemHolderList;
 	[SerializeField] List<PlayerManager> allPlayerManagerList;
 
+	PoliceManager policeManager;
+
 	#region Getter
 
 	public bool IsRoof { get { return isRoof; } }
@@ -38,12 +40,17 @@ public class TrainManager : MonoBehaviour
 		ItemInfo[] itemInfoArr = GameManager.Instance.gamePlayManager.BasicItemInfoArr;
 
 		if (isHead) {
+			//Item
 			ItemInfo largePackageInfo = itemInfoArr [2];
 			GameObject newItem = Instantiate (targetTrainProperties.itemHolderPrefab.gameObject, transform.position, Quaternion.identity) as GameObject;
 			newItem.name = largePackageInfo.itemName;
 			ItemHolder newItemHolder = newItem.GetComponent<ItemHolder> ();
 			newItemHolder.SetItemInfo (largePackageInfo);
 			StoreItem (newItemHolder);
+
+			//Police
+			GameObject newPolice = Instantiate (GameManager.Instance.gamePlayManager.PolicePrefab);
+			newPolice.GetComponent<PoliceManager> ().Move (trainConnection);
 		} else {
 			ItemInfo packageInfo = itemInfoArr [0];
 			for (int i = 0; i < targetTrainProperties.packageCountPerTrain; i++) {
@@ -67,6 +74,9 @@ public class TrainManager : MonoBehaviour
 
 	public void StoreItem (ItemHolder targetItem)
 	{
+		if (targetItem == null)
+			return;
+		
 		allItemHolderList.Add (targetItem);
 		targetItem.transform.parent = transform;
 
@@ -93,6 +103,9 @@ public class TrainManager : MonoBehaviour
 				allPlayerManagerList [i].PlayerMoveController.standPos += Vector3.left * 0.5f * i;
 			}
 		}
+
+		if (policeManager != null)
+			StorePolice (policeManager);
 	}
 
 	public void LeavePlayer (PlayerManager leavePlayerManager)
@@ -100,4 +113,15 @@ public class TrainManager : MonoBehaviour
 		allPlayerManagerList.Remove (leavePlayerManager);
 	}
 
+	public void StorePolice (PoliceManager targetPoliceManager)
+	{
+		policeManager = targetPoliceManager;
+		targetPoliceManager.standPos = transform.position + Vector3.right * 0.5f * ((float)allPlayerManagerList.Count / 2);
+		targetPoliceManager.standPos += Vector3.left * 0.5f * allPlayerManagerList.Count;
+	}
+
+	public void LeavePolice ()
+	{
+		policeManager = null;
+	}
 }

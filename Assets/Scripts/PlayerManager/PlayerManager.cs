@@ -37,7 +37,9 @@ public class PlayerManager : MonoBehaviour, IPointerClickHandler, IMarkable
 
 	public bool IsDie{ get { return isDie; } }
 
-	public PlayerInfo Player { get { return playerInfo; } }
+	public int PlayerIndex{ get { return playerIndex; } }
+
+	public PlayerInfo ThisPlayerInfo { get { return playerInfo; } }
 
 	public HealthController PlayerHealthController{ get { return healthController; } }
 
@@ -102,7 +104,6 @@ public class PlayerManager : MonoBehaviour, IPointerClickHandler, IMarkable
 
 	public void OnPointerClick (PointerEventData eventData)
 	{
-		print (name);
 		if (canBeHit) {
 			GameManager.Instance.gamePlayManager.accountManager.OnPlayerBeHit (this);
 		}

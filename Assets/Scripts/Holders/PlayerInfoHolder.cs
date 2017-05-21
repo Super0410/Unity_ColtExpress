@@ -23,16 +23,17 @@ public class PlayerInfoHolder : MonoBehaviour
 
 	public void UpdateHealth (float targetAmount)
 	{
-		print (targetAmount);
 		image_HealthBar.fillAmount = targetAmount;
 	}
 
 	public void UpdateItem (ItemHolder[] targetItemHolderArr)
 	{
 		GUIHelper.Instance.DestroyChildImmediatly<Image> (layout_ItemParent);
-		Image[] newItemImageArr = GUIHelper.Instance.InstantiateTUnderParent<Image,ItemHolder> (targetItemHolderArr, itemPrefab, layout_ItemParent);
-		for (int i = 0; i < newItemImageArr.Length; i++) {
-			newItemImageArr [i].sprite = Resources.Load<Sprite> (targetItemHolderArr [i].ThisItemInfo.itemUrl);
+		if (targetItemHolderArr.Length > 0) {
+			Image[] newItemImageArr = GUIHelper.Instance.InstantiateTUnderParent<Image,ItemHolder> (targetItemHolderArr, itemPrefab, layout_ItemParent);
+			for (int i = newItemImageArr.Length; i > 0; i--) {
+				newItemImageArr [i - 1].sprite = Resources.Load<Sprite> (targetItemHolderArr [i - 1].ThisItemInfo.itemUrl);
+			}
 		}
 	}
 

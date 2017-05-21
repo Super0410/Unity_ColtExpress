@@ -68,7 +68,7 @@ public struct PlayerIndexCardHolderMap
 public struct ItemInfo
 {
 	public string itemName;
-	public string moneyCount;
+	public int moneyCount;
 	public string itemUrl;
 }
 
@@ -85,6 +85,23 @@ public struct TrainPropertiesInfo
 	public ItemHolder itemHolderPrefab;
 	public int packageCountPerTrain;
 	public int demondCountPerTrain;
+}
+
+[System.Serializable]
+public struct PlayerRankInfo
+{
+	public int rank;
+	public int playerIndex;
+	public PlayerInfo playerInfo;
+	public int moneyCount;
+
+	public PlayerRankInfo (int targetRank, int targetPlayerIndex, PlayerInfo targetPlayerInfo, int targetMoneyCount)
+	{
+		rank = targetRank;
+		playerIndex = targetPlayerIndex;
+		playerInfo = targetPlayerInfo;
+		moneyCount = targetMoneyCount;
+	}
 }
 
 public enum CardType
