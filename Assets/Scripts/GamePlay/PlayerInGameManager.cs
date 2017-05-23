@@ -85,6 +85,21 @@ public class PlayerInGameManager : MonoBehaviour
 
 	void playerPlayInTurn ()
 	{
-		allPlayerDict [curPlayerIndex].PlayerCardController.PlayCard ();
+		if (allPlayerDict [curPlayerIndex].IsDie) {
+			GameManager.Instance.gamePlayManager.OnePlayerFinishPlay (curPlayerIndex);
+		} else
+			allPlayerDict [curPlayerIndex].PlayerCardController.PlayCard ();
+	}
+
+	public void CheckAlivePlayer ()
+	{
+		int alivePlayerCount = allPlayerDict.Count;
+		foreach (PlayerManager playerManager in allPlayerDict.Values) {
+			if (playerManager.IsDie)
+				alivePlayerCount--;
+		}
+		if (alivePlayerCount <= 1) {
+			GameManager.Instance.gamePlayManager.OnGameOver ();
+		}
 	}
 }

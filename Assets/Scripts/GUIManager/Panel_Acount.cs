@@ -10,13 +10,15 @@ public class Panel_Acount : MonoBehaviour
 	[SerializeField] Text text_Reaction;
 	[SerializeField] GameObject panel_Reaction;
 
-	public void OnBegin ()
+	public void FinishOneCard ()
 	{
+		GameManager.Instance.gamePlayManager.accountManager.FinishOneCard ();
 		panel_Reaction.SetActive (false);
 	}
 
 	public void UpdatePlayerAction (int playerIndex, string playerName, string actionDescription)
 	{
+		panel_Reaction.SetActive (false);
 		text_PlayerAction.text = "玩家" + (playerIndex + 1) + ":" + playerName + " " + actionDescription;
 	}
 

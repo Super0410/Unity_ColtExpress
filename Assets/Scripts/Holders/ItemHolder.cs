@@ -46,7 +46,6 @@ public class ItemHolder : MonoBehaviour, IPointerClickHandler, IMarkable
 
 	public void OnPointerClick (PointerEventData eventData)
 	{
-		print (name);
 		if (canPick) {
 			GameManager.Instance.gamePlayManager.accountManager.OnPickUpItem (this);
 		}

@@ -18,32 +18,23 @@ public class AccountManager : MonoBehaviour
 
 	PoliceManager policeManager;
 
-	void Start ()
-	{
-		panel_Account.SetActive (false);
-	}
-
 	public void StartThisRoundAccount ()
 	{
-		if (!panel_Account.activeSelf)
-			panel_Account.SetActive (true);
 
 		thisRoundPlayerIndexCardInfoQueue = GameManager.Instance.gamePlayManager.playCardManager.holeGameCardQueue;
-		print ("StartAccount");
 		nextCard ();
 	}
 
-	public void FinishThisRoundAccount ()
-	{
-		panel_Account.SetActive (false);
-	}
+	//	public void FinishThisRoundAccount ()
+	//	{
+	//	}
 
 	public void FinishOneCard ()
 	{
 		thisAccountPlayerManager.SetPlay (false);
 		Destroy (thisAccountCardHolder.gameObject);
-
-		print (thisRoundPlayerIndexCardInfoQueue.Count);
+	
+		print ("FinishOneCardAccount LastCardCount=" + thisRoundPlayerIndexCardInfoQueue.Count);
 		if (thisRoundPlayerIndexCardInfoQueue.Count > 0) {
 			nextCard ();
 		} else {
@@ -54,10 +45,10 @@ public class AccountManager : MonoBehaviour
 	public void OnPickUpItem (ItemHolder pickedItemHolder)
 	{
 		SetMarkableMark (thisAccountItemHolderList.ToArray (), false);
-
+	
 		thisAccountPlayerManager.PlayerItemController.StoreItem (pickedItemHolder);
 		thisAccountPlayerStandTrainManager.PickUpItem (pickedItemHolder);
-
+	
 		reactionManager.SetActionSuccess ();
 	}
 
@@ -96,7 +87,6 @@ public class AccountManager : MonoBehaviour
 		thisAccountItemHolderList = new List<ItemHolder> ();
 		thisAccountCanAttackPlayerManagerList = new List<PlayerManager> ();
 
-		reactionManager.OnBegin ();
 		PlayerIndexCardHolderMap thisPlayerIndexCardInfo = thisRoundPlayerIndexCardInfoQueue.Dequeue ();
 
 		thisAccountCardHolder = thisPlayerIndexCardInfo.cardHolder;

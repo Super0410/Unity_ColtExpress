@@ -33,6 +33,7 @@ public class ItemController : MonoBehaviour
 			lastItemHolder.gameObject.SetActive (true);
 
 			playerUIManager.UpdateItem (holdItemHolderStack.ToArray ());
+			calculateMoney (holdItemHolderStack.ToArray ());
 		}
 		StartCoroutine (animationTakePunch ());
 		return lastItemHolder;

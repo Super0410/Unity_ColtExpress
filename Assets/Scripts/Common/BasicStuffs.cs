@@ -16,6 +16,20 @@ public struct PlayerInfo
 }
 
 [System.Serializable]
+public struct PlayerPropertyInfo
+{
+	public int playerHealth;
+	public int bulletCount;
+
+	public PlayerPropertyInfo (int _playerHealth, int _bulletCount)
+	{
+		playerHealth = _playerHealth;
+		bulletCount = _bulletCount;
+	}
+}
+
+
+[System.Serializable]
 public struct CharacterInfo
 {
 	public string characterName;

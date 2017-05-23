@@ -34,7 +34,7 @@ public class CameraController : MonoBehaviour
 			cameraSize += mouseScroll * zoomScale;
 			cameraSize = Mathf.Clamp (cameraSize, cameraSizeMinMax.x, cameraSizeMinMax.y);
 
-			cameraPos.x = Mathf.Clamp (cameraPos.x, 1.3f * cameraSize - 12, cameraMoveXMinMax.y);
+			cameraPos.x = Mathf.Clamp (cameraPos.x, cameraMoveXMinMax.x /*1.3f * cameraSize - 12 */, cameraMoveXMinMax.y);
 		}
 
 		if (Input.GetMouseButtonDown (0)) {
@@ -43,7 +43,7 @@ public class CameraController : MonoBehaviour
 		if (Input.GetMouseButton (0)) {
 			float distX = Input.mousePosition.x - lastFrameMousePos.x;
 			cameraPos.x += -distX * moveScale;
-			cameraPos.x = Mathf.Clamp (cameraPos.x, 1.3f * cameraSize - 12, cameraMoveXMinMax.y);
+			cameraPos.x = Mathf.Clamp (cameraPos.x, cameraMoveXMinMax.x /*1.3f * cameraSize - 12*/, cameraMoveXMinMax.y);
 
 			float distY = Input.mousePosition.y - lastFrameMousePos.y;
 			cameraPos.y += -distY * moveScale;

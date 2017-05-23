@@ -34,7 +34,6 @@ public class PoliceManager : MonoBehaviour
 
 		List<PlayerManager> thisTrainPlayerManagerList = trainConnection.trainManager.GetAllPlayerManager;
 		for (int i = 0; i < thisTrainPlayerManagerList.Count; i++) {
-			print (thisTrainPlayerManagerList [i].name);
 			thisTrainPlayerManagerList [i].PlayerHealthController.TakeDamage ();
 			thisTrainPlayerManagerList [i].PlayerCardController.AddOneUselessBulletCard ();
 		}

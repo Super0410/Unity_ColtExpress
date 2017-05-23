@@ -65,9 +65,14 @@ public abstract class Singleton<T> : MonoBehaviour where T: MonoBehaviour
 
 	#region Unity Event Functions
 
-	void Awake ()
+	protected virtual void Awake ()
 	{
-		instance = Instance;
+		if (instance == null)
+			instance = Instance;
+		else
+			DestroyImmediate (gameObject);
+
+		applicationIsQuitting = false;
 	}
 
 	// To make sure there are no ghost objects in editor after the object is destroyed

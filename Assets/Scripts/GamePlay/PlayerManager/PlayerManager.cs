@@ -34,9 +34,10 @@ public class PlayerManager : MonoBehaviour, IPointerClickHandler, IMarkable
 	[SerializeField] int maxBulletCount;
 
 	SpriteRenderer playerRenderer;
-	bool canBeHit;
 	public bool isAnimating;
+	bool canBeHit;
 	bool isDie;
+	public int MoneyCount;
 
 	#region Getter
 
@@ -107,6 +108,7 @@ public class PlayerManager : MonoBehaviour, IPointerClickHandler, IMarkable
 		moveController.PlayerTrainConnection.trainManager.LeavePlayer (this);
 		playerRenderer.sprite = null;
 		text_PlayerName.color = Color.red;
+		GameManager.Instance.gamePlayManager.playerInGameManager.CheckAlivePlayer ();
 	}
 
 	public void ShakeWithTrain ()

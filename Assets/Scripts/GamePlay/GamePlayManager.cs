@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class GamePlayManager : MonoBehaviour
 {
+	public enum GamePlayProgressType
+	{
+		PlayCard,
+		Account,
+		GameOver
+	}
+
 	[Header ("Managers")]
 	public TrainCommander trainCommander;
 	public PlayerInGameManager playerInGameManager;
@@ -44,16 +51,6 @@ public class GamePlayManager : MonoBehaviour
 	int maxRound;
 	int curRound;
 
-	void Awake ()
-	{
-		GameManager.Instance.OnProgressChange += onProgressChange;
-	}
-
-	void OnDestroy ()
-	{
-		GameManager.Instance.OnProgressChange -= onProgressChange;
-	}
-
 	public void Init (PlayerInfo[] allPlayerArr, SceneInfo[] gameSceneArr)
 	{
 		if (!gameObject.activeSelf)
@@ -91,20 +88,21 @@ public class GamePlayManager : MonoBehaviour
 
 	public void OneRoundFinish ()
 	{
-		accountManager.FinishThisRoundAccount ();
-
 		if (curNumOfGame < maxNumOfGame) {
 			nextGame ();
 		} else {
-			rankManager.DoRank (playerInGameManager.AllPlayerDict);
+			OnGameOver ();
 		}
+	}
+
+	public void OnGameOver ()
+	{
+		UIManager.Instance.SetGamePlayUI (GamePlayProgressType.GameOver);
+		rankManager.DoRank (playerInGameManager.AllPlayerDict);
 	}
 
 	void nextGame ()
 	{
-		if (curNumOfGame >= maxNumOfGame)
-			return;
-
 		curNumOfGame++;
 		bgManager.UpdateBg (Resources.Load<Sprite> (gameSceneArr [curNumOfGame - 1].bgUrl));
 		playCardManager.NextGame ();
@@ -118,20 +116,15 @@ public class GamePlayManager : MonoBehaviour
 	{
 		if (curRound < maxRound) {
 			curRound++;
+			UIManager.Instance.SetGamePlayUI (GamePlayProgressType.PlayCard);
+
 			playCardManager.SetNewRound (curRound, maxRound, gameSceneArr [curNumOfGame - 1].cardSideArr [curRound - 1]);
 			playerInGameManager.NextRoundPlay ();
 		} else {
-			playCardManager.PlayCardFinish ();
-			accountManager.StartThisRoundAccount ();
-		}
-	}
+			UIManager.Instance.SetGamePlayUI (GamePlayProgressType.Account);
 
-	void onProgressChange (GameManager.ProgressType targetProgress)
-	{
-		if (targetProgress == GameManager.ProgressType.GameBegin) {
-			gameObject.SetActive (true);
-		} else {
-			gameObject.SetActive (false);
+//			playCardManager.PlayCardFinish ();
+			accountManager.StartThisRoundAccount ();
 		}
 	}
 

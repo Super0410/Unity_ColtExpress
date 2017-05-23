@@ -9,11 +9,6 @@ public class PlayerInitManager : MonoBehaviour
 	int playerCount;
 	List<PlayerInfo> allPlayerList = new List<PlayerInfo> ();
 
-	void Awake ()
-	{
-		GameManager.Instance.OnProgressChange += onProgressChange;
-	}
-
 	public void Init (int playerCount)
 	{
 		this.playerCount = playerCount;
@@ -50,12 +45,6 @@ public class PlayerInitManager : MonoBehaviour
 	{
 		availableCharacterInfoArr = getAvailableCharacterList ();
 		playerInitUI.PrepareOnePlayer (allPlayerList.Count, availableCharacterInfoArr);
-	}
-
-	void onProgressChange (GameManager.ProgressType targetType)
-	{
-		if (targetType != GameManager.ProgressType.InitPlayer) {
-		}
 	}
 
 	CharacterInfo[] getAvailableCharacterList ()

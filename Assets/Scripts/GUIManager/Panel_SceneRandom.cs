@@ -11,8 +11,6 @@ public class Panel_SceneRandom : MonoBehaviour
 
 	void Awake ()
 	{
-		GameManager.Instance.OnProgressChange += onProgressChange;
-
 		allSceneInfoArr = GameManager.Instance.gamePlayManager.BasicSceneInfoArr;
 	}
 
@@ -38,13 +36,5 @@ public class Panel_SceneRandom : MonoBehaviour
 	{
 		GameManager.Instance.SetScene (allSceneInfoArr);
 		GameManager.Instance.SetProgressType (GameManager.ProgressType.GameBegin);
-	}
-
-	void onProgressChange (GameManager.ProgressType targetType)
-	{
-		if (targetType == GameManager.ProgressType.RandomScene) {
-			UIManager.Instance.SwitchUI.OpenPanel (anim);
-		} else
-			UIManager.Instance.SwitchUI.CloseCurrent (anim);
 	}
 }

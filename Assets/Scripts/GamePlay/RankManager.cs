@@ -5,20 +5,19 @@ using System.Linq;
 
 public class RankManager : MonoBehaviour
 {
-	[SerializeField] GameObject panel_Rank;
 	[SerializeField] PlayerRankHolder playerRankPrefab;
 	[SerializeField] Transform layout_PlayerRankParent;
 
 	public void DoRank (Dictionary<int, PlayerManager> targetRankDict)
 	{
-		if (!panel_Rank.activeSelf)
-			panel_Rank.SetActive (true);
-		
 		List <PlayerManager> allPlayerManagerList = new List<PlayerManager> ();
 		foreach (PlayerManager value in targetRankDict.Values) {
 			allPlayerManagerList.Add (value);
 		}
-		allPlayerManagerList.OrderBy (x => x.PlayerItemController.MoneyCount);
+		allPlayerManagerList = allPlayerManagerList.OrderByDescending (x => x.PlayerItemController.MoneyCount).ToList ();
+		for (int i = 0; i < allPlayerManagerList.Count; i++) {
+			print (allPlayerManagerList [i].PlayerItemController.MoneyCount);
+		}
 
 		GUIHelper.Instance.DestroyChildImmediatly<PlayerRankHolder> (layout_PlayerRankParent);
 		PlayerRankHolder[] allPlayerRankeHolderArr = GUIHelper.Instance.InstantiateTUnderParent<PlayerRankHolder,PlayerManager>

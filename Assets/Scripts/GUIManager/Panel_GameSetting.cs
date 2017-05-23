@@ -23,6 +23,7 @@ public class Panel_GameSetting : MonoBehaviour
 
 	public void OnSubmitPlayerCount ()
 	{
+		print (GameManager.Instance);
 		GameManager.Instance.SetPlayerCount (targetPlayerCount);
 		GameManager.Instance.SetProgressType (GameManager.ProgressType.InitPlayer);
 	}

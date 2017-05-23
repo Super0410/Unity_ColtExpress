@@ -13,8 +13,6 @@ public class GameManager : Singleton<GameManager>
 		GameBegin
 	}
 
-	public event System.Action<ProgressType> OnProgressChange;
-
 	[SerializeField] ProgressType progressType;
 
 	[Header ("PlayerPrepare")]
@@ -29,8 +27,9 @@ public class GameManager : Singleton<GameManager>
 	PlayerInfo[] allPlayerArr;
 	SceneInfo[] shuffledSceneArr;
 
-	void Awake ()
+	protected override void Awake ()
 	{
+		base.Awake ();
 		SceneManager.sceneLoaded += onSceneLoaded;
 	}
 
@@ -56,9 +55,9 @@ public class GameManager : Singleton<GameManager>
 
 	public void SetProgressType (ProgressType targetProgress)
 	{
+		print (targetProgress);
 		progressType = targetProgress;
-		if (OnProgressChange != null)
-			OnProgressChange (progressType);
+		UIManager.instance.SetMenuUI (progressType);
 		
 		switch (progressType) {
 		case ProgressType.InitPlayer:

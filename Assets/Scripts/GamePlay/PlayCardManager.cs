@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class PlayCardManager : MonoBehaviour
 {
-	[SerializeField] GameObject Panel_PlayCard;
+	//	[SerializeField] GameObject Panel_PlayCard;
 	[SerializeField] Text text_RoundInfo;
 	[SerializeField] GameObject Mask_PlayerIdentity;
 	[SerializeField] Text text_PlayerInfo;
@@ -28,10 +28,9 @@ public class PlayCardManager : MonoBehaviour
 		holeGameCardQueue = new Queue<PlayerIndexCardHolderMap> ();
 	}
 
-	public void PlayCardFinish ()
-	{
-		Panel_PlayCard.SetActive (false);
-	}
+	//	public void PlayCardFinish ()
+	//	{
+	//	}
 
 	public void SetNewRound (int curRound, int maxRound, bool isUp)
 	{
@@ -41,14 +40,6 @@ public class PlayCardManager : MonoBehaviour
 
 	public void NextPlayerPlay (int playerIndex, PlayerInfo playerInfo, PlayerManager playerManager, CardInfo[] playerStoreCardArr)
 	{
-		if (!Panel_PlayCard.activeSelf)
-			Panel_PlayCard.SetActive (true);
-
-		if (playerManager.IsDie) {
-			GameManager.Instance.gamePlayManager.OnePlayerFinishPlay (thisPlayerIndex);
-			print ("dead");
-			return;
-		}
 		GameManager.Instance.gamePlayManager.cameraController.ForcusOnPos (playerManager.PlayerRenderer.transform.position);
 		
 		Mask_PlayerIdentity.SetActive (true);
